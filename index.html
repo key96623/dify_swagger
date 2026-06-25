@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dify Workflow Swagger</title>
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css">
+  <style>
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: #f7f8fa;
+    }
+
+    #swagger-ui {
+      min-height: 100vh;
+    }
+
+    .swagger-ui .topbar {
+      background: #003f87;
+    }
+
+    .swagger-ui .topbar .download-url-wrapper {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="swagger-ui"></div>
+  <script src="./openapi/dify-all-workflows.openapi.js"></script>
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-standalone-preset.js"></script>
+  <script>
+    window.addEventListener('load', function() {
+      const swaggerRoot = document.getElementById('swagger-ui');
+
+      function relabelAuthorizationType(root) {
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+        let textNode;
+
+        while ((textNode = walker.nextNode())) {
+          if (textNode.nodeValue.includes('(http, Bearer)')) {
+            textNode.nodeValue = textNode.nodeValue.replace(
+              /\(http,\s*Bearer\)/g,
+              '(API Key)'
+            );
+          }
+        }
+      }
+
+      const authorizationLabelObserver = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          mutation.addedNodes.forEach(function(node) {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+              relabelAuthorizationType(node);
+            }
+          });
+        });
+      });
+
+      authorizationLabelObserver.observe(swaggerRoot, {
+        childList: true,
+        subtree: true
+      });
+
+      if (!window.DIFY_ALL_WORKFLOWS_SPEC) {
+        swaggerRoot.innerHTML =
+          '<main style="max-width:760px;margin:80px auto;padding:24px;font-family:Arial,sans-serif">' +
+          '<h1>Unable to load the local OpenAPI definition</h1>' +
+          '<p>Run <code>node scripts/sync-swagger-spec.js</code> from the project directory, then reload this page.</p>' +
+          '</main>';
+        return;
+      }
+
+      window.ui = SwaggerUIBundle({
+        dom_id: '#swagger-ui',
+        spec: window.DIFY_ALL_WORKFLOWS_SPEC,
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset
+        ],
+        layout: 'StandaloneLayout',
+        deepLinking: true,
+        displayRequestDuration: true,
+        tryItOutEnabled: true
+      });
+    });
+  </script>
+</body>
+</html>
