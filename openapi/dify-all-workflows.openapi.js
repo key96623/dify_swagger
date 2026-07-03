@@ -3,8 +3,8 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
   "openapi": "3.1.0",
   "info": {
     "title": "Dify Workflows - All Schemas",
-    "version": "1.0.0",
-    "description": "Single OpenAPI document for all Dify workflow request schemas used by this UI. The runtime URL is always the original Dify POST /dify/v1/workflows/run endpoint; the workflow is selected by the Bearer API key."
+    "version": "1.1.0",
+    "description": "Single OpenAPI document for all Dify workflow request schemas used by this UI. The runtime URL is always the original Dify POST /dify/v1/workflows/run endpoint; the workflow is selected by the Bearer API key. Email-Writer now uses audience to choose external or internal output; mode=prod routes supported workflows to production Redmine."
   },
   "servers": [
     {
@@ -195,6 +195,12 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                             "type": "string",
                             "description": "Target assignee display name.",
                             "minLength": 1
+                          },
+                          "mode": {
+                            "type": "string",
+                            "description": "Optional Redmine target routing. Fill prod to run against production Redmine. Leave blank or any other value to run against the test Redmine site.",
+                            "default": "",
+                            "example": "prod"
                           }
                         }
                       },
@@ -250,6 +256,12 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                             "type": "string",
                             "description": "Target assignee display name.",
                             "minLength": 1
+                          },
+                          "mode": {
+                            "type": "string",
+                            "description": "Optional Redmine target routing. Fill prod to run against production Redmine. Leave blank or any other value to run against the test Redmine site.",
+                            "default": "",
+                            "example": "prod"
                           }
                         }
                       },
@@ -294,6 +306,12 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                             "type": "string",
                             "description": "Reason entered by the user when rejecting the task.",
                             "minLength": 1
+                          },
+                          "mode": {
+                            "type": "string",
+                            "description": "Optional Redmine target routing. Fill prod to run against production Redmine. Leave blank or any other value to run against the test Redmine site.",
+                            "default": "",
+                            "example": "prod"
                           }
                         }
                       },
@@ -313,7 +331,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                   },
                   {
                     "type": "object",
-                    "title": "Email-Writer - External",
+                    "title": "Email-Writer",
                     "additionalProperties": false,
                     "required": [
                       "inputs",
@@ -325,7 +343,8 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                         "type": "object",
                         "additionalProperties": false,
                         "required": [
-                          "issue_id"
+                          "issue_id",
+                          "audience"
                         ],
                         "properties": {
                           "issue_id": {
@@ -333,51 +352,24 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                             "description": "Redmine issue ID used to generate the email draft.",
                             "minLength": 1
                           },
-                          "style": {
+                          "audience": {
                             "type": "string",
-                            "description": "Optional writing style or refinement instruction."
-                          }
-                        }
-                      },
-                      "response_mode": {
-                        "type": "string",
-                        "enum": [
-                          "blocking",
-                          "streaming"
-                        ],
-                        "default": "blocking"
-                      },
-                      "user": {
-                        "type": "string",
-                        "example": "swagger-test"
-                      }
-                    }
-                  },
-                  {
-                    "type": "object",
-                    "title": "Email-Writer - Internal",
-                    "additionalProperties": false,
-                    "required": [
-                      "inputs",
-                      "response_mode",
-                      "user"
-                    ],
-                    "properties": {
-                      "inputs": {
-                        "type": "object",
-                        "additionalProperties": false,
-                        "required": [
-                          "issue_id"
-                        ],
-                        "properties": {
-                          "issue_id": {
-                            "type": "string",
-                            "description": "Redmine issue ID used to generate the internal email draft.",
-                            "minLength": 1
+                            "description": "Email audience. Fill external for customer-facing email, or internal for internal handoff email.",
+                            "enum": [
+                              "external",
+                              "internal"
+                            ],
+                            "example": "external"
                           },
                           "style": {
                             "type": "string",
                             "description": "Optional writing style or refinement instruction."
+                          },
+                          "mode": {
+                            "type": "string",
+                            "description": "Optional Redmine target routing. Fill prod to run against production Redmine. Leave blank or any other value to run against the test Redmine site.",
+                            "default": "",
+                            "example": "prod"
                           }
                         }
                       },
@@ -435,7 +427,8 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                     "inputs": {
                       "raw": "{\"issue_id\":9502}",
                       "intent": "TRANSFER_ASPLUS",
-                      "assignee_name": "Key Huang"
+                      "assignee_name": "Key Huang",
+                      "mode": ""
                     },
                     "response_mode": "blocking",
                     "user": "swagger-test"
@@ -448,7 +441,8 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                       "raw": "{\"id\":9502,\"subject\":\"Network Issue\"}",
                       "project_id": "auto-2023074099103",
                       "intent": "TRANSFER_AEACL",
-                      "assignee_name": "Key Huang"
+                      "assignee_name": "Key Huang",
+                      "mode": ""
                     },
                     "response_mode": "blocking",
                     "user": "swagger-test"
@@ -459,29 +453,21 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                   "value": {
                     "inputs": {
                       "issue_id": "9502",
-                      "reason": "Missing required customer environment information."
+                      "reason": "Missing required customer environment information.",
+                      "mode": ""
                     },
                     "response_mode": "blocking",
                     "user": "swagger-test"
                   }
                 },
-                "emailWriterExternal": {
-                  "summary": "Email-Writer - External",
+                "emailWriter": {
+                  "summary": "Email-Writer",
                   "value": {
                     "inputs": {
                       "issue_id": "9502",
-                      "style": "Make the tone concise and customer-friendly."
-                    },
-                    "response_mode": "blocking",
-                    "user": "swagger-test"
-                  }
-                },
-                "emailWriterInternal": {
-                  "summary": "Email-Writer - Internal",
-                  "value": {
-                    "inputs": {
-                      "issue_id": "9502",
-                      "style": "Make the message suitable for internal service handoff."
+                      "audience": "external",
+                      "style": "Make the tone concise and customer-friendly.",
+                      "mode": ""
                     },
                     "response_mode": "blocking",
                     "user": "swagger-test"
@@ -622,14 +608,9 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "requestSchema": "#/components/schemas/TaskRejectRequest"
           },
           {
-            "name": "Email-Writer - External",
-            "apiKeyEnv": "DIFY_EMAIL_API_KEY",
+            "name": "Email-Writer",
+            "apiKeyEnv": "DIFY_EMAIL_WRITER_API_KEY",
             "requestSchema": "#/components/schemas/EmailWriterRequest"
-          },
-          {
-            "name": "Email-Writer - Internal",
-            "apiKeyEnv": "DIFY_EMAIL_INTERNAL_API_KEY",
-            "requestSchema": "#/components/schemas/EmailWriterInternalRequest"
           }
         ]
       }
@@ -772,7 +753,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
       },
       "EmailWriterRequest": {
         "type": "object",
-        "title": "Email-Writer - External",
+        "title": "Email-Writer",
         "additionalProperties": false,
         "required": [
           "inputs",
@@ -784,7 +765,8 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "type": "object",
             "additionalProperties": false,
             "required": [
-              "issue_id"
+              "issue_id",
+              "audience"
             ],
             "properties": {
               "issue_id": {
@@ -792,9 +774,24 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                 "description": "Redmine issue ID used to generate the email draft.",
                 "minLength": 1
               },
+              "audience": {
+                "type": "string",
+                "description": "Email audience. Fill external for customer-facing email, or internal for internal handoff email.",
+                "enum": [
+                  "external",
+                  "internal"
+                ],
+                "example": "external"
+              },
               "style": {
                 "type": "string",
                 "description": "Optional writing style or refinement instruction."
+              },
+              "mode": {
+                "type": "string",
+                "description": "Optional Redmine target routing. Fill prod to run against production Redmine. Leave blank or any other value to run against the test Redmine site.",
+                "default": "",
+                "example": "prod"
               }
             }
           },
@@ -816,7 +813,8 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "issue_id"
+          "issue_id",
+          "audience"
         ],
         "properties": {
           "issue_id": {
@@ -824,69 +822,24 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "description": "Redmine issue ID used to generate the email draft.",
             "minLength": 1
           },
-          "style": {
+          "audience": {
             "type": "string",
-            "description": "Optional writing style or refinement instruction."
-          }
-        }
-      },
-      "EmailWriterInternalRequest": {
-        "type": "object",
-        "title": "Email-Writer - Internal",
-        "additionalProperties": false,
-        "required": [
-          "inputs",
-          "response_mode",
-          "user"
-        ],
-        "properties": {
-          "inputs": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "issue_id"
-            ],
-            "properties": {
-              "issue_id": {
-                "type": "string",
-                "description": "Redmine issue ID used to generate the internal email draft.",
-                "minLength": 1
-              },
-              "style": {
-                "type": "string",
-                "description": "Optional writing style or refinement instruction."
-              }
-            }
-          },
-          "response_mode": {
-            "type": "string",
+            "description": "Email audience. Fill external for customer-facing email, or internal for internal handoff email.",
             "enum": [
-              "blocking",
-              "streaming"
+              "external",
+              "internal"
             ],
-            "default": "blocking"
-          },
-          "user": {
-            "type": "string",
-            "example": "swagger-test"
-          }
-        }
-      },
-      "EmailWriterInternalInputs": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "issue_id"
-        ],
-        "properties": {
-          "issue_id": {
-            "type": "string",
-            "description": "Redmine issue ID used to generate the internal email draft.",
-            "minLength": 1
+            "example": "external"
           },
           "style": {
             "type": "string",
             "description": "Optional writing style or refinement instruction."
+          },
+          "mode": {
+            "type": "string",
+            "description": "Optional Redmine target routing. Fill prod to run against production Redmine. Leave blank or any other value to run against the test Redmine site.",
+            "default": "",
+            "example": "prod"
           }
         }
       },
@@ -922,6 +875,12 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                 "type": "string",
                 "description": "Target assignee display name.",
                 "minLength": 1
+              },
+              "mode": {
+                "type": "string",
+                "description": "Optional Redmine target routing. Fill prod to run against production Redmine. Leave blank or any other value to run against the test Redmine site.",
+                "default": "",
+                "example": "prod"
               }
             }
           },
@@ -977,6 +936,12 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                 "type": "string",
                 "description": "Target assignee display name.",
                 "minLength": 1
+              },
+              "mode": {
+                "type": "string",
+                "description": "Optional Redmine target routing. Fill prod to run against production Redmine. Leave blank or any other value to run against the test Redmine site.",
+                "default": "",
+                "example": "prod"
               }
             }
           },
@@ -1016,6 +981,12 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "type": "string",
             "description": "Target assignee display name.",
             "minLength": 1
+          },
+          "mode": {
+            "type": "string",
+            "description": "Optional Redmine target routing. Fill prod to run against production Redmine. Leave blank or any other value to run against the test Redmine site.",
+            "default": "",
+            "example": "prod"
           }
         }
       },
@@ -1047,6 +1018,12 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "type": "string",
             "description": "Target assignee display name.",
             "minLength": 1
+          },
+          "mode": {
+            "type": "string",
+            "description": "Optional Redmine target routing. Fill prod to run against production Redmine. Leave blank or any other value to run against the test Redmine site.",
+            "default": "",
+            "example": "prod"
           }
         }
       },
@@ -1129,6 +1106,12 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                 "type": "string",
                 "description": "Reason entered by the user when rejecting the task.",
                 "minLength": 1
+              },
+              "mode": {
+                "type": "string",
+                "description": "Optional Redmine target routing. Fill prod to run against production Redmine. Leave blank or any other value to run against the test Redmine site.",
+                "default": "",
+                "example": "prod"
               }
             }
           },
@@ -1163,6 +1146,12 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "type": "string",
             "description": "Reason entered by the user when rejecting the task.",
             "minLength": 1
+          },
+          "mode": {
+            "type": "string",
+            "description": "Optional Redmine target routing. Fill prod to run against production Redmine. Leave blank or any other value to run against the test Redmine site.",
+            "default": "",
+            "example": "prod"
           }
         }
       },
@@ -1288,7 +1277,8 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
           "inputs": {
             "raw": "{\"issue_id\":9502}",
             "intent": "TRANSFER_ASPLUS",
-            "assignee_name": "Key Huang"
+            "assignee_name": "Key Huang",
+            "mode": ""
           },
           "response_mode": "blocking",
           "user": "swagger-test"
@@ -1301,7 +1291,8 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "raw": "{\"id\":9502,\"subject\":\"Network Issue\"}",
             "project_id": "auto-2023074099103",
             "intent": "TRANSFER_AEACL",
-            "assignee_name": "Key Huang"
+            "assignee_name": "Key Huang",
+            "mode": ""
           },
           "response_mode": "blocking",
           "user": "swagger-test"
@@ -1322,29 +1313,21 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
         "value": {
           "inputs": {
             "issue_id": "9502",
-            "reason": "Missing required customer environment information."
+            "reason": "Missing required customer environment information.",
+            "mode": ""
           },
           "response_mode": "blocking",
           "user": "swagger-test"
         }
       },
       "EmailWriterExample": {
-        "summary": "Email-Writer - External",
+        "summary": "Email-Writer",
         "value": {
           "inputs": {
             "issue_id": "9502",
-            "style": "Make the tone concise and customer-friendly."
-          },
-          "response_mode": "blocking",
-          "user": "swagger-test"
-        }
-      },
-      "EmailWriterInternalExample": {
-        "summary": "Email-Writer - Internal",
-        "value": {
-          "inputs": {
-            "issue_id": "9502",
-            "style": "Make the message suitable for internal service handoff."
+            "audience": "external",
+            "style": "Make the tone concise and customer-friendly.",
+            "mode": ""
           },
           "response_mode": "blocking",
           "user": "swagger-test"
