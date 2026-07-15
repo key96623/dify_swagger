@@ -233,7 +233,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                         "additionalProperties": false,
                         "required": [
                           "raw",
-                          "project_id",
+                          "project_id_aeacl",
                           "intent",
                           "assignee_name"
                         ],
@@ -243,10 +243,10 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                             "description": "Stringified JSON payload. For AE.ACL, the UI sends the full current issue object.",
                             "example": "{\"id\":9502,\"subject\":\"Network Issue\"}"
                           },
-                          "project_id": {
+                          "project_id_aeacl": {
                             "type": "string",
-                            "description": "AE.ACL project identifier.",
-                            "example": "auto-2023074099103"
+                            "description": "AE.ACL Redmine project identifier.",
+                            "example": "auto-2023074099328"
                           },
                           "intent": {
                             "type": "string",
@@ -439,7 +439,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                   "value": {
                     "inputs": {
                       "raw": "{\"id\":9502,\"subject\":\"Network Issue\"}",
-                      "project_id": "auto-2023074099103",
+                      "project_id_aeacl": "auto-2023074099328",
                       "intent": "TRANSFER_AEACL",
                       "assignee_name": "Key Huang",
                       "mode": ""
@@ -913,7 +913,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "additionalProperties": false,
             "required": [
               "raw",
-              "project_id",
+              "project_id_aeacl",
               "intent",
               "assignee_name"
             ],
@@ -923,10 +923,10 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                 "description": "Stringified JSON payload. For AE.ACL, the UI sends the full current issue object.",
                 "example": "{\"id\":9502,\"subject\":\"Network Issue\"}"
               },
-              "project_id": {
+              "project_id_aeacl": {
                 "type": "string",
-                "description": "AE.ACL project identifier.",
-                "example": "auto-2023074099103"
+                "description": "AE.ACL Redmine project identifier.",
+                "example": "auto-2023074099328"
               },
               "intent": {
                 "type": "string",
@@ -995,7 +995,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
         "additionalProperties": false,
         "required": [
           "raw",
-          "project_id",
+          "project_id_aeacl",
           "intent",
           "assignee_name"
         ],
@@ -1005,10 +1005,10 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "description": "Stringified JSON payload. For AE.ACL, the UI sends the full current issue object.",
             "example": "{\"id\":9502,\"subject\":\"Network Issue\"}"
           },
-          "project_id": {
+          "project_id_aeacl": {
             "type": "string",
-            "description": "AE.ACL project identifier.",
-            "example": "auto-2023074099103"
+            "description": "AE.ACL Redmine project identifier.",
+            "example": "auto-2023074099328"
           },
           "intent": {
             "type": "string",
@@ -1289,7 +1289,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
         "value": {
           "inputs": {
             "raw": "{\"id\":9502,\"subject\":\"Network Issue\"}",
-            "project_id": "auto-2023074099103",
+            "project_id_aeacl": "auto-2023074099328",
             "intent": "TRANSFER_AEACL",
             "assignee_name": "Key Huang",
             "mode": ""
