@@ -178,6 +178,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                         "additionalProperties": false,
                         "required": [
                           "raw",
+                          "action_user",
                           "intent",
                           "assignee_name"
                         ],
@@ -186,6 +187,12 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                             "type": "string",
                             "description": "Stringified JSON payload. For AS+, the UI sends {\"issue_id\": number}.",
                             "example": "{\"issue_id\":9502}"
+                          },
+                          "action_user": {
+                            "type": "string",
+                            "description": "User performing the transfer action.",
+                            "example": "Key Huang",
+                            "minLength": 1
                           },
                           "intent": {
                             "type": "string",
@@ -234,6 +241,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                         "required": [
                           "raw",
                           "project_id_aeacl",
+                          "action_user",
                           "intent",
                           "assignee_name"
                         ],
@@ -247,6 +255,12 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                             "type": "string",
                             "description": "AE.ACL Redmine project identifier.",
                             "example": "auto-2023074099328"
+                          },
+                          "action_user": {
+                            "type": "string",
+                            "description": "User performing the transfer action.",
+                            "example": "Key Huang",
+                            "minLength": 1
                           },
                           "intent": {
                             "type": "string",
@@ -426,6 +440,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                   "value": {
                     "inputs": {
                       "raw": "{\"issue_id\":9502}",
+                      "action_user": "Key Huang",
                       "intent": "TRANSFER_ASPLUS",
                       "assignee_name": "Key Huang",
                       "mode": ""
@@ -440,6 +455,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                     "inputs": {
                       "raw": "{\"id\":9502,\"subject\":\"Network Issue\"}",
                       "project_id_aeacl": "auto-2023074099328",
+                      "action_user": "Key Huang",
                       "intent": "TRANSFER_AEACL",
                       "assignee_name": "Key Huang",
                       "mode": ""
@@ -858,6 +874,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "additionalProperties": false,
             "required": [
               "raw",
+              "action_user",
               "intent",
               "assignee_name"
             ],
@@ -866,6 +883,12 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                 "type": "string",
                 "description": "Stringified JSON payload. For AS+, the UI sends {\"issue_id\": number}.",
                 "example": "{\"issue_id\":9502}"
+              },
+              "action_user": {
+                "type": "string",
+                "description": "User performing the transfer action.",
+                "example": "Key Huang",
+                "minLength": 1
               },
               "intent": {
                 "type": "string",
@@ -914,6 +937,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "required": [
               "raw",
               "project_id_aeacl",
+              "action_user",
               "intent",
               "assignee_name"
             ],
@@ -927,6 +951,12 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                 "type": "string",
                 "description": "AE.ACL Redmine project identifier.",
                 "example": "auto-2023074099328"
+              },
+              "action_user": {
+                "type": "string",
+                "description": "User performing the transfer action.",
+                "example": "Key Huang",
+                "minLength": 1
               },
               "intent": {
                 "type": "string",
@@ -964,6 +994,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
         "additionalProperties": false,
         "required": [
           "raw",
+          "action_user",
           "intent",
           "assignee_name"
         ],
@@ -972,6 +1003,12 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "type": "string",
             "description": "Stringified JSON payload. For AS+, the UI sends {\"issue_id\": number}.",
             "example": "{\"issue_id\":9502}"
+          },
+          "action_user": {
+            "type": "string",
+            "description": "User performing the transfer action.",
+            "example": "Key Huang",
+            "minLength": 1
           },
           "intent": {
             "type": "string",
@@ -996,6 +1033,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
         "required": [
           "raw",
           "project_id_aeacl",
+          "action_user",
           "intent",
           "assignee_name"
         ],
@@ -1009,6 +1047,12 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "type": "string",
             "description": "AE.ACL Redmine project identifier.",
             "example": "auto-2023074099328"
+          },
+          "action_user": {
+            "type": "string",
+            "description": "User performing the transfer action.",
+            "example": "Key Huang",
+            "minLength": 1
           },
           "intent": {
             "type": "string",
@@ -1276,6 +1320,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
         "value": {
           "inputs": {
             "raw": "{\"issue_id\":9502}",
+            "action_user": "Key Huang",
             "intent": "TRANSFER_ASPLUS",
             "assignee_name": "Key Huang",
             "mode": ""
@@ -1290,6 +1335,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
           "inputs": {
             "raw": "{\"id\":9502,\"subject\":\"Network Issue\"}",
             "project_id_aeacl": "auto-2023074099328",
+            "action_user": "Key Huang",
             "intent": "TRANSFER_AEACL",
             "assignee_name": "Key Huang",
             "mode": ""
