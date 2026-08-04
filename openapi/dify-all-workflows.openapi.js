@@ -3,7 +3,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
   "openapi": "3.1.0",
   "info": {
     "title": "Dify Workflows - All Schemas",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "description": "Single OpenAPI document for the original Dify workflow API. All workflows use the same POST /dify/v1/workflows/run endpoint; the Bearer API key selects the Dify app, while each workflow block documents its own inputs. Mainflow action blocks describe the public start-node variables and keep Redmine secrets and derived child-node values internal."
   },
   "servers": [
@@ -419,6 +419,12 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                           "redmine_data"
                         ],
                         "properties": {
+                          "mode": {
+                            "type": "string",
+                            "description": "Optional Redmine routing. Fill prod for production; blank or any other value uses the test site.",
+                            "default": "",
+                            "example": "prod"
+                          },
                           "redmine_data": {
                             "type": "string",
                             "description": "Stringified Redmine issue payload. Dify expects redmine_data as a string, so pass JSON text instead of a JSON object.",
@@ -841,22 +847,22 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                         "title": "Generate Brief & Suggestion inputs",
                         "additionalProperties": false,
                         "required": [
-                          "redmine_data",
-                          "description",
-                          "action_user",
-                          "clean_erma_data"
+                          "action_user"
                         ],
                         "properties": {
+                          "mode": {
+                            "type": "string",
+                            "description": "Optional Redmine routing. Fill prod for production; blank or any other value uses the test site.",
+                            "default": "",
+                            "example": "prod"
+                          },
                           "redmine_data": {
                             "type": "string",
-                            "description": "Stringified Redmine issue payload.",
-                            "example": "{\"id\":9502,\"subject\":\"Network Issue\"}",
-                            "minLength": 1
+                            "description": "Optional stringified Redmine issue payload used by the latest YAML workflow."
                           },
                           "description": {
                             "type": "string",
-                            "description": "Issue description used to generate a brief and suggested action.",
-                            "minLength": 1
+                            "description": "Optional issue description used to generate a brief and suggested action."
                           },
                           "action_user": {
                             "type": "string",
@@ -866,10 +872,39 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                           },
                           "clean_erma_data": {
                             "type": "string",
-                            "description": "Cleaned ERMA data supplied to the workflow.",
-                            "minLength": 1
+                            "description": "Optional cleaned ERMA data supplied to the workflow."
+                          },
+                          "redmine": {
+                            "type": "string",
+                            "description": "Optional Redmine system used by the workflow.",
+                            "enum": [
+                              "asplus",
+                              "aeacl"
+                            ]
+                          },
+                          "issue": {
+                            "type": "string",
+                            "description": "Issue identifier used by the requested Swagger sample. The latest exported YAML still declares this start variable as issue_id; align the YAML variable name before production use.",
+                            "example": "9502"
+                          },
+                          "issue_id": {
+                            "type": "string",
+                            "description": "Issue identifier declared by the latest exported Brief & Suggestion YAML.",
+                            "example": "9502"
                           }
-                        }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "issue"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "issue_id"
+                            ]
+                          }
+                        ]
                       },
                       "response_mode": {
                         "type": "string",
@@ -984,7 +1019,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                       "action_user": "Key Huang",
                       "intent": "NEW",
                       "redmine": "asplus",
-                      "email_input": "Customer reports intermittent disconnects on the device.",
+                      "raw": "Customer reports intermittent disconnects on the device.",
                       "mode": ""
                     },
                     "response_mode": "blocking",
@@ -999,7 +1034,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                       "intent": "UPDATE",
                       "redmine": "asplus",
                       "issue_id": "9502",
-                      "user_input": "Please update the issue with the latest troubleshooting result.",
+                      "raw": "Please update the issue with the latest troubleshooting result.",
                       "mode": ""
                     },
                     "response_mode": "blocking",
@@ -1038,9 +1073,9 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                       "action_user": "Key Huang",
                       "intent": "TRANSFER",
                       "redmine": "asplus",
+                      "issue_id": "9502",
                       "target_redmine": "aeacl",
-                      "project_id_aeacl": "auto-2023074099328",
-                      "raw": "{\"id\":9502,\"subject\":\"Network Issue\"}",
+                      "project_id_aeacl": "auto-2023074099334",
                       "mode": ""
                     },
                     "response_mode": "blocking",
@@ -1053,8 +1088,8 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                     "inputs": {
                       "action_user": "Key Huang",
                       "intent": "REJECT",
-                      "redmine": "asplus",
-                      "issue_id": "9502",
+                      "redmine": "aeacl",
+                      "issue_id": "8965",
                       "reason": "Missing required customer environment information.",
                       "mode": ""
                     },
@@ -1066,10 +1101,9 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                   "summary": "Generate Brief & Suggestion",
                   "value": {
                     "inputs": {
-                      "redmine_data": "{\"id\":9502,\"subject\":\"Network Issue\"}",
-                      "description": "Customer reports intermittent disconnects.",
+                      "issue": "9502",
                       "action_user": "Key Huang",
-                      "clean_erma_data": "Network issue; intermittent disconnects."
+                      "redmine": "asplus"
                     },
                     "response_mode": "blocking",
                     "user": "swagger-test"
@@ -1645,6 +1679,12 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
               "redmine_data"
             ],
             "properties": {
+              "mode": {
+                "type": "string",
+                "description": "Optional Redmine routing. Fill prod for production; blank or any other value uses the test site.",
+                "default": "",
+                "example": "prod"
+              },
               "redmine_data": {
                 "type": "string",
                 "description": "Stringified Redmine issue payload. Dify expects redmine_data as a string, so pass JSON text instead of a JSON object.",
@@ -1673,6 +1713,12 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
           "redmine_data"
         ],
         "properties": {
+          "mode": {
+            "type": "string",
+            "description": "Optional Redmine routing. Fill prod for production; blank or any other value uses the test site.",
+            "default": "",
+            "example": "prod"
+          },
           "redmine_data": {
             "type": "string",
             "description": "Stringified Redmine issue payload. Dify expects redmine_data as a string, so pass JSON text instead of a JSON object.",
@@ -2862,22 +2908,22 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "title": "Generate Brief & Suggestion inputs",
             "additionalProperties": false,
             "required": [
-              "redmine_data",
-              "description",
-              "action_user",
-              "clean_erma_data"
+              "action_user"
             ],
             "properties": {
+              "mode": {
+                "type": "string",
+                "description": "Optional Redmine routing. Fill prod for production; blank or any other value uses the test site.",
+                "default": "",
+                "example": "prod"
+              },
               "redmine_data": {
                 "type": "string",
-                "description": "Stringified Redmine issue payload.",
-                "example": "{\"id\":9502,\"subject\":\"Network Issue\"}",
-                "minLength": 1
+                "description": "Optional stringified Redmine issue payload used by the latest YAML workflow."
               },
               "description": {
                 "type": "string",
-                "description": "Issue description used to generate a brief and suggested action.",
-                "minLength": 1
+                "description": "Optional issue description used to generate a brief and suggested action."
               },
               "action_user": {
                 "type": "string",
@@ -2887,10 +2933,39 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
               },
               "clean_erma_data": {
                 "type": "string",
-                "description": "Cleaned ERMA data supplied to the workflow.",
-                "minLength": 1
+                "description": "Optional cleaned ERMA data supplied to the workflow."
+              },
+              "redmine": {
+                "type": "string",
+                "description": "Optional Redmine system used by the workflow.",
+                "enum": [
+                  "asplus",
+                  "aeacl"
+                ]
+              },
+              "issue": {
+                "type": "string",
+                "description": "Issue identifier used by the requested Swagger sample. The latest exported YAML still declares this start variable as issue_id; align the YAML variable name before production use.",
+                "example": "9502"
+              },
+              "issue_id": {
+                "type": "string",
+                "description": "Issue identifier declared by the latest exported Brief & Suggestion YAML.",
+                "example": "9502"
               }
-            }
+            },
+            "anyOf": [
+              {
+                "required": [
+                  "issue"
+                ]
+              },
+              {
+                "required": [
+                  "issue_id"
+                ]
+              }
+            ]
           },
           "response_mode": {
             "type": "string",
@@ -2911,22 +2986,22 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
         "title": "Generate Brief & Suggestion inputs",
         "additionalProperties": false,
         "required": [
-          "redmine_data",
-          "description",
-          "action_user",
-          "clean_erma_data"
+          "action_user"
         ],
         "properties": {
+          "mode": {
+            "type": "string",
+            "description": "Optional Redmine routing. Fill prod for production; blank or any other value uses the test site.",
+            "default": "",
+            "example": "prod"
+          },
           "redmine_data": {
             "type": "string",
-            "description": "Stringified Redmine issue payload.",
-            "example": "{\"id\":9502,\"subject\":\"Network Issue\"}",
-            "minLength": 1
+            "description": "Optional stringified Redmine issue payload used by the latest YAML workflow."
           },
           "description": {
             "type": "string",
-            "description": "Issue description used to generate a brief and suggested action.",
-            "minLength": 1
+            "description": "Optional issue description used to generate a brief and suggested action."
           },
           "action_user": {
             "type": "string",
@@ -2936,10 +3011,39 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
           },
           "clean_erma_data": {
             "type": "string",
-            "description": "Cleaned ERMA data supplied to the workflow.",
-            "minLength": 1
+            "description": "Optional cleaned ERMA data supplied to the workflow."
+          },
+          "redmine": {
+            "type": "string",
+            "description": "Optional Redmine system used by the workflow.",
+            "enum": [
+              "asplus",
+              "aeacl"
+            ]
+          },
+          "issue": {
+            "type": "string",
+            "description": "Issue identifier used by the requested Swagger sample. The latest exported YAML still declares this start variable as issue_id; align the YAML variable name before production use.",
+            "example": "9502"
+          },
+          "issue_id": {
+            "type": "string",
+            "description": "Issue identifier declared by the latest exported Brief & Suggestion YAML.",
+            "example": "9502"
           }
-        }
+        },
+        "anyOf": [
+          {
+            "required": [
+              "issue"
+            ]
+          },
+          {
+            "required": [
+              "issue_id"
+            ]
+          }
+        ]
       }
     },
     "responses": {
@@ -2995,7 +3099,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "action_user": "Key Huang",
             "intent": "NEW",
             "redmine": "asplus",
-            "email_input": "Customer reports intermittent disconnects on the device.",
+            "raw": "Customer reports intermittent disconnects on the device.",
             "mode": ""
           },
           "response_mode": "blocking",
@@ -3010,7 +3114,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "intent": "UPDATE",
             "redmine": "asplus",
             "issue_id": "9502",
-            "user_input": "Please update the issue with the latest troubleshooting result.",
+            "raw": "Please update the issue with the latest troubleshooting result.",
             "mode": ""
           },
           "response_mode": "blocking",
@@ -3049,9 +3153,9 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "action_user": "Key Huang",
             "intent": "TRANSFER",
             "redmine": "asplus",
+            "issue_id": "9502",
             "target_redmine": "aeacl",
-            "project_id_aeacl": "auto-2023074099328",
-            "raw": "{\"id\":9502,\"subject\":\"Network Issue\"}",
+            "project_id_aeacl": "auto-2023074099334",
             "mode": ""
           },
           "response_mode": "blocking",
@@ -3064,8 +3168,8 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
           "inputs": {
             "action_user": "Key Huang",
             "intent": "REJECT",
-            "redmine": "asplus",
-            "issue_id": "9502",
+            "redmine": "aeacl",
+            "issue_id": "8965",
             "reason": "Missing required customer environment information.",
             "mode": ""
           },
@@ -3077,10 +3181,9 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
         "summary": "Generate Brief & Suggestion",
         "value": {
           "inputs": {
-            "redmine_data": "{\"id\":9502,\"subject\":\"Network Issue\"}",
-            "description": "Customer reports intermittent disconnects.",
+            "issue": "9502",
             "action_user": "Key Huang",
-            "clean_erma_data": "Network issue; intermittent disconnects."
+            "redmine": "asplus"
           },
           "response_mode": "blocking",
           "user": "swagger-test"

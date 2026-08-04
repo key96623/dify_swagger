@@ -1,5 +1,11 @@
 # Release Notes
 
+## 2.0.1 - 2026-08-04
+
+- Updated the default Swagger samples for Task Create, Task Update, Task Transfer AE.ACL, Task Reject, and Generate Brief & Suggestion.
+- Updated the latest mainflow sample values, including raw text inputs, AE.ACL project `auto-2023074099334`, and AE.ACL rejection issue `8965`.
+- Added the latest Brief & Suggestion optional start-node fields and kept both `issue` and the YAML-exported `issue_id` for compatibility.
+
 ## 2.0.0 - 2026-08-04
 
 - Reorganized the canonical OpenAPI document into the current ten workflow blocks: Technical Bot, Teams Bot, Task Create, Task Update, Task Summary, Task Reassign, Task Transfer AE.ACL, Task Reject, Generate Brief & Suggestion, and Email Writer.
