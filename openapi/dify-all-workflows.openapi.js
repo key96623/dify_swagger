@@ -3,8 +3,8 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
   "openapi": "3.1.0",
   "info": {
     "title": "Dify Workflows - All Schemas",
-    "version": "1.1.0",
-    "description": "Single OpenAPI document for all Dify workflow request schemas used by this UI. The runtime URL is always the original Dify POST /dify/v1/workflows/run endpoint; the workflow is selected by the Bearer API key. Email-Writer now uses audience to choose external or internal output; mode=prod routes supported workflows to production Redmine."
+    "version": "2.0.0",
+    "description": "Single OpenAPI document for the original Dify workflow API. All workflows use the same POST /dify/v1/workflows/run endpoint; the Bearer API key selects the Dify app, while each workflow block documents its own inputs. Mainflow action blocks describe the public start-node variables and keep Redmine secrets and derived child-node values internal."
   },
   "servers": [
     {
@@ -52,8 +52,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                         "type": "object",
                         "additionalProperties": false,
                         "required": [
-                          "message",
-                          "type"
+                          "message"
                         ],
                         "properties": {
                           "message": {
@@ -63,7 +62,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                           },
                           "type": {
                             "type": "string",
-                            "description": "Optional routing value for the Technical Bot workflow. Leave it blank to use the default chatbot endpoint. Fill product_pm to route to the non-streaming Product PM endpoint, or product_ae to route to the streaming Product AE endpoint.",
+                            "description": "Optional routing value. Leave it blank to use the default chatbot endpoint. Fill product_pm for the non-streaming Product PM endpoint, or product_ae for the streaming Product AE endpoint.",
                             "enum": [
                               "",
                               "product_pm",
@@ -127,6 +126,284 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                   },
                   {
                     "type": "object",
+                    "title": "Task Create",
+                    "additionalProperties": false,
+                    "required": [
+                      "inputs",
+                      "response_mode",
+                      "user"
+                    ],
+                    "properties": {
+                      "inputs": {
+                        "type": "object",
+                        "title": "Task Create inputs from 主流程",
+                        "additionalProperties": false,
+                        "required": [
+                          "action_user",
+                          "intent",
+                          "redmine"
+                        ],
+                        "properties": {
+                          "action_user": {
+                            "type": "string",
+                            "description": "Required by the 主流程 start node. User performing the action.",
+                            "example": "Key Huang",
+                            "minLength": 1
+                          },
+                          "mode": {
+                            "type": "string",
+                            "description": "Optional Redmine routing. Fill prod for production; blank or any other value uses the test site.",
+                            "default": "",
+                            "example": "prod"
+                          },
+                          "user_input": {
+                            "type": "string",
+                            "description": "Free-text user request consumed by the 主流程 intent and field extraction nodes."
+                          },
+                          "email_input": {
+                            "type": "string",
+                            "description": "Original email content consumed by the 主流程 extraction nodes."
+                          },
+                          "raw": {
+                            "type": "string",
+                            "description": "Stringified JSON payload consumed by the 主流程 extraction nodes."
+                          },
+                          "files": {
+                            "type": "array",
+                            "description": "Optional Dify file-list input passed through the 主流程 when attachments are needed.",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": true
+                            }
+                          },
+                          "project_id": {
+                            "type": "string",
+                            "description": "Optional AS+ Redmine project identifier or project override."
+                          },
+                          "project_id_aeacl": {
+                            "type": "string",
+                            "description": "AE.ACL Redmine project identifier used by the transfer/create branch.",
+                            "example": "auto-2023074099328"
+                          },
+                          "intent": {
+                            "type": "string",
+                            "const": "NEW",
+                            "description": "Mainflow route for creating a new Redmine issue."
+                          },
+                          "done": {
+                            "type": "string",
+                            "description": "Optional completion or confirmation value used by the 主流程."
+                          },
+                          "assignee_name": {
+                            "type": "string",
+                            "description": "Target Redmine assignee display name."
+                          },
+                          "redmine": {
+                            "type": "string",
+                            "description": "Source or selected Redmine system.",
+                            "enum": [
+                              "asplus",
+                              "aeacl"
+                            ]
+                          },
+                          "source_redmine": {
+                            "type": "string",
+                            "description": "Optional source Redmine system for transfer routing.",
+                            "enum": [
+                              "asplus",
+                              "aeacl"
+                            ]
+                          },
+                          "target_redmine": {
+                            "type": "string",
+                            "description": "Destination Redmine system for transfer routing.",
+                            "enum": [
+                              "asplus",
+                              "aeacl"
+                            ]
+                          },
+                          "reason": {
+                            "type": "string",
+                            "description": "Optional rejection reason."
+                          },
+                          "issue_id": {
+                            "type": "string",
+                            "description": "Redmine issue ID. The 主流程 can also extract it from raw or email_input."
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "email_input"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "raw"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "user_input"
+                            ]
+                          }
+                        ]
+                      },
+                      "response_mode": {
+                        "type": "string",
+                        "enum": [
+                          "blocking",
+                          "streaming"
+                        ],
+                        "default": "blocking"
+                      },
+                      "user": {
+                        "type": "string",
+                        "example": "swagger-test"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "title": "Task Update",
+                    "additionalProperties": false,
+                    "required": [
+                      "inputs",
+                      "response_mode",
+                      "user"
+                    ],
+                    "properties": {
+                      "inputs": {
+                        "type": "object",
+                        "title": "Task Update inputs from 主流程",
+                        "additionalProperties": false,
+                        "required": [
+                          "action_user",
+                          "intent",
+                          "redmine"
+                        ],
+                        "properties": {
+                          "action_user": {
+                            "type": "string",
+                            "description": "Required by the 主流程 start node. User performing the action.",
+                            "example": "Key Huang",
+                            "minLength": 1
+                          },
+                          "mode": {
+                            "type": "string",
+                            "description": "Optional Redmine routing. Fill prod for production; blank or any other value uses the test site.",
+                            "default": "",
+                            "example": "prod"
+                          },
+                          "user_input": {
+                            "type": "string",
+                            "description": "Free-text user request consumed by the 主流程 intent and field extraction nodes."
+                          },
+                          "email_input": {
+                            "type": "string",
+                            "description": "Original email content consumed by the 主流程 extraction nodes."
+                          },
+                          "raw": {
+                            "type": "string",
+                            "description": "Stringified JSON payload consumed by the 主流程 extraction nodes."
+                          },
+                          "files": {
+                            "type": "array",
+                            "description": "Optional Dify file-list input passed through the 主流程 when attachments are needed.",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": true
+                            }
+                          },
+                          "project_id": {
+                            "type": "string",
+                            "description": "Optional AS+ Redmine project identifier or project override."
+                          },
+                          "project_id_aeacl": {
+                            "type": "string",
+                            "description": "AE.ACL Redmine project identifier used by the transfer/create branch.",
+                            "example": "auto-2023074099328"
+                          },
+                          "intent": {
+                            "type": "string",
+                            "const": "UPDATE",
+                            "description": "Mainflow route for updating an existing Redmine issue."
+                          },
+                          "done": {
+                            "type": "string",
+                            "description": "Optional completion or confirmation value used by the 主流程."
+                          },
+                          "assignee_name": {
+                            "type": "string",
+                            "description": "Target Redmine assignee display name."
+                          },
+                          "redmine": {
+                            "type": "string",
+                            "description": "Source or selected Redmine system.",
+                            "enum": [
+                              "asplus",
+                              "aeacl"
+                            ]
+                          },
+                          "source_redmine": {
+                            "type": "string",
+                            "description": "Optional source Redmine system for transfer routing.",
+                            "enum": [
+                              "asplus",
+                              "aeacl"
+                            ]
+                          },
+                          "target_redmine": {
+                            "type": "string",
+                            "description": "Destination Redmine system for transfer routing.",
+                            "enum": [
+                              "asplus",
+                              "aeacl"
+                            ]
+                          },
+                          "reason": {
+                            "type": "string",
+                            "description": "Optional rejection reason."
+                          },
+                          "issue_id": {
+                            "type": "string",
+                            "description": "Redmine issue ID. The 主流程 can also extract it from raw or email_input."
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "issue_id"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "raw"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "email_input"
+                            ]
+                          }
+                        ]
+                      },
+                      "response_mode": {
+                        "type": "string",
+                        "enum": [
+                          "blocking",
+                          "streaming"
+                        ],
+                        "default": "blocking"
+                      },
+                      "user": {
+                        "type": "string",
+                        "example": "swagger-test"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
                     "title": "Task Summary",
                     "additionalProperties": false,
                     "required": [
@@ -165,7 +442,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                   },
                   {
                     "type": "object",
-                    "title": "Task Transfer AS+",
+                    "title": "Task Reassign",
                     "additionalProperties": false,
                     "required": [
                       "inputs",
@@ -175,39 +452,103 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                     "properties": {
                       "inputs": {
                         "type": "object",
+                        "title": "Task Reassign inputs from 主流程",
                         "additionalProperties": false,
                         "required": [
-                          "raw",
                           "action_user",
                           "intent",
+                          "redmine",
+                          "issue_id",
                           "assignee_name"
                         ],
                         "properties": {
-                          "raw": {
-                            "type": "string",
-                            "description": "Stringified JSON payload. For AS+, the UI sends {\"issue_id\": number}.",
-                            "example": "{\"issue_id\":9502}"
-                          },
                           "action_user": {
                             "type": "string",
-                            "description": "User performing the transfer action.",
+                            "description": "Required by the 主流程 start node. User performing the action.",
                             "example": "Key Huang",
-                            "minLength": 1
-                          },
-                          "intent": {
-                            "type": "string",
-                            "const": "TRANSFER_ASPLUS"
-                          },
-                          "assignee_name": {
-                            "type": "string",
-                            "description": "Target assignee display name.",
                             "minLength": 1
                           },
                           "mode": {
                             "type": "string",
-                            "description": "Optional Redmine target routing. Fill prod to run against production Redmine. Leave blank or any other value to run against the test Redmine site.",
+                            "description": "Optional Redmine routing. Fill prod for production; blank or any other value uses the test site.",
                             "default": "",
                             "example": "prod"
+                          },
+                          "user_input": {
+                            "type": "string",
+                            "description": "Free-text user request consumed by the 主流程 intent and field extraction nodes."
+                          },
+                          "email_input": {
+                            "type": "string",
+                            "description": "Original email content consumed by the 主流程 extraction nodes."
+                          },
+                          "raw": {
+                            "type": "string",
+                            "description": "Stringified JSON payload consumed by the 主流程 extraction nodes."
+                          },
+                          "files": {
+                            "type": "array",
+                            "description": "Optional Dify file-list input passed through the 主流程 when attachments are needed.",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": true
+                            }
+                          },
+                          "project_id": {
+                            "type": "string",
+                            "description": "Optional AS+ Redmine project identifier or project override."
+                          },
+                          "project_id_aeacl": {
+                            "type": "string",
+                            "description": "AE.ACL Redmine project identifier used by the transfer/create branch.",
+                            "example": "auto-2023074099328"
+                          },
+                          "intent": {
+                            "type": "string",
+                            "const": "REASSIGNMENT",
+                            "description": "Mainflow route for changing the Redmine assignee."
+                          },
+                          "done": {
+                            "type": "string",
+                            "description": "Optional completion or confirmation value used by the 主流程."
+                          },
+                          "assignee_name": {
+                            "type": "string",
+                            "description": "New Redmine assignee display name.",
+                            "minLength": 1
+                          },
+                          "redmine": {
+                            "type": "string",
+                            "enum": [
+                              "asplus",
+                              "aeacl"
+                            ],
+                            "description": "Redmine system containing the issue."
+                          },
+                          "source_redmine": {
+                            "type": "string",
+                            "description": "Optional source Redmine system for transfer routing.",
+                            "enum": [
+                              "asplus",
+                              "aeacl"
+                            ]
+                          },
+                          "target_redmine": {
+                            "type": "string",
+                            "description": "Destination Redmine system for transfer routing.",
+                            "enum": [
+                              "asplus",
+                              "aeacl"
+                            ]
+                          },
+                          "reason": {
+                            "type": "string",
+                            "description": "Optional rejection reason."
+                          },
+                          "issue_id": {
+                            "type": "string",
+                            "description": "Redmine issue ID to reassign.",
+                            "minLength": 1
                           }
                         }
                       },
@@ -237,47 +578,115 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                     "properties": {
                       "inputs": {
                         "type": "object",
+                        "title": "Task Transfer AE.ACL inputs from 主流程",
                         "additionalProperties": false,
                         "required": [
-                          "raw",
-                          "project_id_aeacl",
                           "action_user",
                           "intent",
-                          "assignee_name"
+                          "redmine",
+                          "target_redmine",
+                          "project_id_aeacl"
                         ],
                         "properties": {
-                          "raw": {
-                            "type": "string",
-                            "description": "Stringified JSON payload. For AE.ACL, the UI sends the full current issue object.",
-                            "example": "{\"id\":9502,\"subject\":\"Network Issue\"}"
-                          },
-                          "project_id_aeacl": {
-                            "type": "string",
-                            "description": "AE.ACL Redmine project identifier.",
-                            "example": "auto-2023074099328"
-                          },
                           "action_user": {
                             "type": "string",
-                            "description": "User performing the transfer action.",
+                            "description": "Required by the 主流程 start node. User performing the action.",
                             "example": "Key Huang",
-                            "minLength": 1
-                          },
-                          "intent": {
-                            "type": "string",
-                            "const": "TRANSFER_AEACL"
-                          },
-                          "assignee_name": {
-                            "type": "string",
-                            "description": "Target assignee display name.",
                             "minLength": 1
                           },
                           "mode": {
                             "type": "string",
-                            "description": "Optional Redmine target routing. Fill prod to run against production Redmine. Leave blank or any other value to run against the test Redmine site.",
+                            "description": "Optional Redmine routing. Fill prod for production; blank or any other value uses the test site.",
                             "default": "",
                             "example": "prod"
+                          },
+                          "user_input": {
+                            "type": "string",
+                            "description": "Free-text user request consumed by the 主流程 intent and field extraction nodes."
+                          },
+                          "email_input": {
+                            "type": "string",
+                            "description": "Original email content consumed by the 主流程 extraction nodes."
+                          },
+                          "raw": {
+                            "type": "string",
+                            "description": "Stringified JSON payload consumed by the 主流程 extraction nodes."
+                          },
+                          "files": {
+                            "type": "array",
+                            "description": "Optional Dify file-list input passed through the 主流程 when attachments are needed.",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": true
+                            }
+                          },
+                          "project_id": {
+                            "type": "string",
+                            "description": "Optional AS+ Redmine project identifier or project override."
+                          },
+                          "project_id_aeacl": {
+                            "type": "string",
+                            "description": "AE.ACL Redmine project identifier.",
+                            "example": "auto-2023074099328",
+                            "minLength": 1
+                          },
+                          "intent": {
+                            "type": "string",
+                            "const": "TRANSFER",
+                            "description": "Mainflow route for transferring an issue between Redmine systems."
+                          },
+                          "done": {
+                            "type": "string",
+                            "description": "Optional completion or confirmation value used by the 主流程."
+                          },
+                          "assignee_name": {
+                            "type": "string",
+                            "description": "Target Redmine assignee display name."
+                          },
+                          "redmine": {
+                            "type": "string",
+                            "const": "asplus",
+                            "description": "Transfer source. This branch starts from AS+."
+                          },
+                          "source_redmine": {
+                            "type": "string",
+                            "description": "Optional source Redmine system for transfer routing.",
+                            "enum": [
+                              "asplus",
+                              "aeacl"
+                            ]
+                          },
+                          "target_redmine": {
+                            "type": "string",
+                            "const": "aeacl",
+                            "description": "Transfer destination. This branch ends at AE.ACL."
+                          },
+                          "reason": {
+                            "type": "string",
+                            "description": "Optional rejection reason."
+                          },
+                          "issue_id": {
+                            "type": "string",
+                            "description": "Redmine issue ID. The 主流程 can also extract it from raw or email_input."
                           }
-                        }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "issue_id"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "raw"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "email_input"
+                            ]
+                          }
+                        ]
                       },
                       "response_mode": {
                         "type": "string",
@@ -305,27 +714,160 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                     "properties": {
                       "inputs": {
                         "type": "object",
+                        "title": "Task Reject inputs from 主流程",
                         "additionalProperties": false,
                         "required": [
-                          "issue_id",
-                          "reason"
+                          "action_user",
+                          "intent",
+                          "redmine",
+                          "issue_id"
                         ],
                         "properties": {
-                          "issue_id": {
+                          "action_user": {
                             "type": "string",
-                            "description": "Redmine issue ID.",
-                            "minLength": 1
-                          },
-                          "reason": {
-                            "type": "string",
-                            "description": "Reason entered by the user when rejecting the task.",
+                            "description": "Required by the 主流程 start node. User performing the action.",
+                            "example": "Key Huang",
                             "minLength": 1
                           },
                           "mode": {
                             "type": "string",
-                            "description": "Optional Redmine target routing. Fill prod to run against production Redmine. Leave blank or any other value to run against the test Redmine site.",
+                            "description": "Optional Redmine routing. Fill prod for production; blank or any other value uses the test site.",
                             "default": "",
                             "example": "prod"
+                          },
+                          "user_input": {
+                            "type": "string",
+                            "description": "Free-text user request consumed by the 主流程 intent and field extraction nodes."
+                          },
+                          "email_input": {
+                            "type": "string",
+                            "description": "Original email content consumed by the 主流程 extraction nodes."
+                          },
+                          "raw": {
+                            "type": "string",
+                            "description": "Stringified JSON payload consumed by the 主流程 extraction nodes."
+                          },
+                          "files": {
+                            "type": "array",
+                            "description": "Optional Dify file-list input passed through the 主流程 when attachments are needed.",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": true
+                            }
+                          },
+                          "project_id": {
+                            "type": "string",
+                            "description": "Optional AS+ Redmine project identifier or project override."
+                          },
+                          "project_id_aeacl": {
+                            "type": "string",
+                            "description": "AE.ACL Redmine project identifier used by the transfer/create branch.",
+                            "example": "auto-2023074099328"
+                          },
+                          "intent": {
+                            "type": "string",
+                            "const": "REJECT",
+                            "description": "Mainflow route for rejecting an existing Redmine issue."
+                          },
+                          "done": {
+                            "type": "string",
+                            "description": "Optional completion or confirmation value used by the 主流程."
+                          },
+                          "assignee_name": {
+                            "type": "string",
+                            "description": "Target Redmine assignee display name."
+                          },
+                          "redmine": {
+                            "type": "string",
+                            "enum": [
+                              "asplus",
+                              "aeacl"
+                            ],
+                            "description": "Redmine system containing the issue."
+                          },
+                          "source_redmine": {
+                            "type": "string",
+                            "description": "Optional source Redmine system for transfer routing.",
+                            "enum": [
+                              "asplus",
+                              "aeacl"
+                            ]
+                          },
+                          "target_redmine": {
+                            "type": "string",
+                            "description": "Destination Redmine system for transfer routing.",
+                            "enum": [
+                              "asplus",
+                              "aeacl"
+                            ]
+                          },
+                          "reason": {
+                            "type": "string",
+                            "description": "Optional reason entered when rejecting the task."
+                          },
+                          "issue_id": {
+                            "type": "string",
+                            "description": "Redmine issue ID to reject.",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "response_mode": {
+                        "type": "string",
+                        "enum": [
+                          "blocking",
+                          "streaming"
+                        ],
+                        "default": "blocking"
+                      },
+                      "user": {
+                        "type": "string",
+                        "example": "swagger-test"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "title": "Generate Brief & Suggestion",
+                    "additionalProperties": false,
+                    "required": [
+                      "inputs",
+                      "response_mode",
+                      "user"
+                    ],
+                    "properties": {
+                      "inputs": {
+                        "type": "object",
+                        "title": "Generate Brief & Suggestion inputs",
+                        "additionalProperties": false,
+                        "required": [
+                          "redmine_data",
+                          "description",
+                          "action_user",
+                          "clean_erma_data"
+                        ],
+                        "properties": {
+                          "redmine_data": {
+                            "type": "string",
+                            "description": "Stringified Redmine issue payload.",
+                            "example": "{\"id\":9502,\"subject\":\"Network Issue\"}",
+                            "minLength": 1
+                          },
+                          "description": {
+                            "type": "string",
+                            "description": "Issue description used to generate a brief and suggested action.",
+                            "minLength": 1
+                          },
+                          "action_user": {
+                            "type": "string",
+                            "description": "User requesting the generated brief and suggestion.",
+                            "example": "Key Huang",
+                            "minLength": 1
+                          },
+                          "clean_erma_data": {
+                            "type": "string",
+                            "description": "Cleaned ERMA data supplied to the workflow.",
+                            "minLength": 1
                           }
                         }
                       },
@@ -358,7 +900,8 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                         "additionalProperties": false,
                         "required": [
                           "issue_id",
-                          "audience"
+                          "audience",
+                          "redmine"
                         ],
                         "properties": {
                           "issue_id": {
@@ -384,6 +927,15 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                             "description": "Optional Redmine target routing. Fill prod to run against production Redmine. Leave blank or any other value to run against the test Redmine site.",
                             "default": "",
                             "example": "prod"
+                          },
+                          "redmine": {
+                            "type": "string",
+                            "description": "Redmine system used to retrieve the issue.",
+                            "enum": [
+                              "asplus",
+                              "aeacl"
+                            ],
+                            "example": "asplus"
                           }
                         }
                       },
@@ -404,7 +956,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                 ]
               },
               "examples": {
-                "technicallBot": {
+                "technicalBot": {
                   "summary": "Technical Bot",
                   "value": {
                     "inputs": {
@@ -425,6 +977,35 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                     "user": "swagger-test"
                   }
                 },
+                "taskCreate": {
+                  "summary": "Task Create via 主流程",
+                  "value": {
+                    "inputs": {
+                      "action_user": "Key Huang",
+                      "intent": "NEW",
+                      "redmine": "asplus",
+                      "email_input": "Customer reports intermittent disconnects on the device.",
+                      "mode": ""
+                    },
+                    "response_mode": "blocking",
+                    "user": "swagger-test"
+                  }
+                },
+                "taskUpdate": {
+                  "summary": "Task Update via 主流程",
+                  "value": {
+                    "inputs": {
+                      "action_user": "Key Huang",
+                      "intent": "UPDATE",
+                      "redmine": "asplus",
+                      "issue_id": "9502",
+                      "user_input": "Please update the issue with the latest troubleshooting result.",
+                      "mode": ""
+                    },
+                    "response_mode": "blocking",
+                    "user": "swagger-test"
+                  }
+                },
                 "taskSummary": {
                   "summary": "Task Summary",
                   "value": {
@@ -435,14 +1016,15 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                     "user": "swagger-test"
                   }
                 },
-                "taskTransferAsplus": {
-                  "summary": "Task Transfer AS+",
+                "taskReassign": {
+                  "summary": "Task Reassign via 主流程",
                   "value": {
                     "inputs": {
-                      "raw": "{\"issue_id\":9502}",
                       "action_user": "Key Huang",
-                      "intent": "TRANSFER_ASPLUS",
-                      "assignee_name": "Key Huang",
+                      "intent": "REASSIGNMENT",
+                      "redmine": "asplus",
+                      "issue_id": "9502",
+                      "assignee_name": "Albert.Sun",
                       "mode": ""
                     },
                     "response_mode": "blocking",
@@ -450,14 +1032,15 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                   }
                 },
                 "taskTransferAeacl": {
-                  "summary": "Task Transfer AE.ACL",
+                  "summary": "Task Transfer AE.ACL via 主流程",
                   "value": {
                     "inputs": {
-                      "raw": "{\"id\":9502,\"subject\":\"Network Issue\"}",
-                      "project_id_aeacl": "auto-2023074099328",
                       "action_user": "Key Huang",
-                      "intent": "TRANSFER_AEACL",
-                      "assignee_name": "Key Huang",
+                      "intent": "TRANSFER",
+                      "redmine": "asplus",
+                      "target_redmine": "aeacl",
+                      "project_id_aeacl": "auto-2023074099328",
+                      "raw": "{\"id\":9502,\"subject\":\"Network Issue\"}",
                       "mode": ""
                     },
                     "response_mode": "blocking",
@@ -465,9 +1048,12 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                   }
                 },
                 "taskReject": {
-                  "summary": "Task Reject",
+                  "summary": "Task Reject via 主流程",
                   "value": {
                     "inputs": {
+                      "action_user": "Key Huang",
+                      "intent": "REJECT",
+                      "redmine": "asplus",
                       "issue_id": "9502",
                       "reason": "Missing required customer environment information.",
                       "mode": ""
@@ -476,13 +1062,27 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                     "user": "swagger-test"
                   }
                 },
+                "briefSuggestion": {
+                  "summary": "Generate Brief & Suggestion",
+                  "value": {
+                    "inputs": {
+                      "redmine_data": "{\"id\":9502,\"subject\":\"Network Issue\"}",
+                      "description": "Customer reports intermittent disconnects.",
+                      "action_user": "Key Huang",
+                      "clean_erma_data": "Network issue; intermittent disconnects."
+                    },
+                    "response_mode": "blocking",
+                    "user": "swagger-test"
+                  }
+                },
                 "emailWriter": {
-                  "summary": "Email-Writer",
+                  "summary": "Email Writer",
                   "value": {
                     "inputs": {
                       "issue_id": "9502",
                       "audience": "external",
                       "style": "Make the tone concise and customer-friendly.",
+                      "redmine": "asplus",
                       "mode": ""
                     },
                     "response_mode": "blocking",
@@ -604,14 +1204,24 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "requestSchema": "#/components/schemas/TeamsBotRequest"
           },
           {
+            "name": "Task Create",
+            "apiKeyEnv": "DIFY_MAINFLOW_API_KEY",
+            "requestSchema": "#/components/schemas/TaskCreateRequest"
+          },
+          {
+            "name": "Task Update",
+            "apiKeyEnv": "DIFY_MAINFLOW_API_KEY",
+            "requestSchema": "#/components/schemas/TaskUpdateRequest"
+          },
+          {
             "name": "Task Summary",
             "apiKeyEnv": "DIFY_TASK_SUMMARY_API_KEY",
             "requestSchema": "#/components/schemas/TaskSummaryRequest"
           },
           {
-            "name": "Task Transfer AS+",
+            "name": "Task Reassign",
             "apiKeyEnv": "DIFY_MAINFLOW_API_KEY",
-            "requestSchema": "#/components/schemas/TaskTransferAsplusRequest"
+            "requestSchema": "#/components/schemas/TaskReassignRequest"
           },
           {
             "name": "Task Transfer AE.ACL",
@@ -620,11 +1230,16 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
           },
           {
             "name": "Task Reject",
-            "apiKeyEnv": "DIFY_TASK_REJECT_API_KEY",
+            "apiKeyEnv": "DIFY_MAINFLOW_API_KEY",
             "requestSchema": "#/components/schemas/TaskRejectRequest"
           },
           {
-            "name": "Email-Writer",
+            "name": "Generate Brief & Suggestion",
+            "apiKeyEnv": "DIFY_BRIEF_SUGGESTION_API_KEY",
+            "requestSchema": "#/components/schemas/BriefSuggestionRequest"
+          },
+          {
+            "name": "Email Writer",
             "apiKeyEnv": "DIFY_EMAIL_WRITER_API_KEY",
             "requestSchema": "#/components/schemas/EmailWriterRequest"
           }
@@ -655,8 +1270,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "type": "object",
             "additionalProperties": false,
             "required": [
-              "message",
-              "type"
+              "message"
             ],
             "properties": {
               "message": {
@@ -666,7 +1280,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
               },
               "type": {
                 "type": "string",
-                "description": "Optional routing value for the Technical Bot workflow. Leave it blank to use the default chatbot endpoint. Fill product_pm to route to the non-streaming Product PM endpoint, or product_ae to route to the streaming Product AE endpoint.",
+                "description": "Optional routing value. Leave it blank to use the default chatbot endpoint. Fill product_pm for the non-streaming Product PM endpoint, or product_ae for the streaming Product AE endpoint.",
                 "enum": [
                   "",
                   "product_pm",
@@ -694,8 +1308,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "message",
-          "type"
+          "message"
         ],
         "properties": {
           "message": {
@@ -705,7 +1318,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
           },
           "type": {
             "type": "string",
-            "description": "Optional routing value for the Technical Bot workflow. Leave it blank to use the default chatbot endpoint. Fill product_pm to route to the non-streaming Product PM endpoint, or product_ae to route to the streaming Product AE endpoint.",
+            "description": "Optional routing value. Leave it blank to use the default chatbot endpoint. Fill product_pm for the non-streaming Product PM endpoint, or product_ae for the streaming Product AE endpoint.",
             "enum": [
               "",
               "product_pm",
@@ -782,7 +1395,8 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "additionalProperties": false,
             "required": [
               "issue_id",
-              "audience"
+              "audience",
+              "redmine"
             ],
             "properties": {
               "issue_id": {
@@ -808,6 +1422,15 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                 "description": "Optional Redmine target routing. Fill prod to run against production Redmine. Leave blank or any other value to run against the test Redmine site.",
                 "default": "",
                 "example": "prod"
+              },
+              "redmine": {
+                "type": "string",
+                "description": "Redmine system used to retrieve the issue.",
+                "enum": [
+                  "asplus",
+                  "aeacl"
+                ],
+                "example": "asplus"
               }
             }
           },
@@ -830,7 +1453,8 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
         "additionalProperties": false,
         "required": [
           "issue_id",
-          "audience"
+          "audience",
+          "redmine"
         ],
         "properties": {
           "issue_id": {
@@ -856,68 +1480,15 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "description": "Optional Redmine target routing. Fill prod to run against production Redmine. Leave blank or any other value to run against the test Redmine site.",
             "default": "",
             "example": "prod"
-          }
-        }
-      },
-      "TaskTransferAsplusRequest": {
-        "type": "object",
-        "title": "Task Transfer AS+",
-        "additionalProperties": false,
-        "required": [
-          "inputs",
-          "response_mode",
-          "user"
-        ],
-        "properties": {
-          "inputs": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "raw",
-              "action_user",
-              "intent",
-              "assignee_name"
-            ],
-            "properties": {
-              "raw": {
-                "type": "string",
-                "description": "Stringified JSON payload. For AS+, the UI sends {\"issue_id\": number}.",
-                "example": "{\"issue_id\":9502}"
-              },
-              "action_user": {
-                "type": "string",
-                "description": "User performing the transfer action.",
-                "example": "Key Huang",
-                "minLength": 1
-              },
-              "intent": {
-                "type": "string",
-                "const": "TRANSFER_ASPLUS"
-              },
-              "assignee_name": {
-                "type": "string",
-                "description": "Target assignee display name.",
-                "minLength": 1
-              },
-              "mode": {
-                "type": "string",
-                "description": "Optional Redmine target routing. Fill prod to run against production Redmine. Leave blank or any other value to run against the test Redmine site.",
-                "default": "",
-                "example": "prod"
-              }
-            }
           },
-          "response_mode": {
+          "redmine": {
             "type": "string",
+            "description": "Redmine system used to retrieve the issue.",
             "enum": [
-              "blocking",
-              "streaming"
+              "asplus",
+              "aeacl"
             ],
-            "default": "blocking"
-          },
-          "user": {
-            "type": "string",
-            "example": "swagger-test"
+            "example": "asplus"
           }
         }
       },
@@ -933,47 +1504,115 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
         "properties": {
           "inputs": {
             "type": "object",
+            "title": "Task Transfer AE.ACL inputs from 主流程",
             "additionalProperties": false,
             "required": [
-              "raw",
-              "project_id_aeacl",
               "action_user",
               "intent",
-              "assignee_name"
+              "redmine",
+              "target_redmine",
+              "project_id_aeacl"
             ],
             "properties": {
-              "raw": {
-                "type": "string",
-                "description": "Stringified JSON payload. For AE.ACL, the UI sends the full current issue object.",
-                "example": "{\"id\":9502,\"subject\":\"Network Issue\"}"
-              },
-              "project_id_aeacl": {
-                "type": "string",
-                "description": "AE.ACL Redmine project identifier.",
-                "example": "auto-2023074099328"
-              },
               "action_user": {
                 "type": "string",
-                "description": "User performing the transfer action.",
+                "description": "Required by the 主流程 start node. User performing the action.",
                 "example": "Key Huang",
-                "minLength": 1
-              },
-              "intent": {
-                "type": "string",
-                "const": "TRANSFER_AEACL"
-              },
-              "assignee_name": {
-                "type": "string",
-                "description": "Target assignee display name.",
                 "minLength": 1
               },
               "mode": {
                 "type": "string",
-                "description": "Optional Redmine target routing. Fill prod to run against production Redmine. Leave blank or any other value to run against the test Redmine site.",
+                "description": "Optional Redmine routing. Fill prod for production; blank or any other value uses the test site.",
                 "default": "",
                 "example": "prod"
+              },
+              "user_input": {
+                "type": "string",
+                "description": "Free-text user request consumed by the 主流程 intent and field extraction nodes."
+              },
+              "email_input": {
+                "type": "string",
+                "description": "Original email content consumed by the 主流程 extraction nodes."
+              },
+              "raw": {
+                "type": "string",
+                "description": "Stringified JSON payload consumed by the 主流程 extraction nodes."
+              },
+              "files": {
+                "type": "array",
+                "description": "Optional Dify file-list input passed through the 主流程 when attachments are needed.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "project_id": {
+                "type": "string",
+                "description": "Optional AS+ Redmine project identifier or project override."
+              },
+              "project_id_aeacl": {
+                "type": "string",
+                "description": "AE.ACL Redmine project identifier.",
+                "example": "auto-2023074099328",
+                "minLength": 1
+              },
+              "intent": {
+                "type": "string",
+                "const": "TRANSFER",
+                "description": "Mainflow route for transferring an issue between Redmine systems."
+              },
+              "done": {
+                "type": "string",
+                "description": "Optional completion or confirmation value used by the 主流程."
+              },
+              "assignee_name": {
+                "type": "string",
+                "description": "Target Redmine assignee display name."
+              },
+              "redmine": {
+                "type": "string",
+                "const": "asplus",
+                "description": "Transfer source. This branch starts from AS+."
+              },
+              "source_redmine": {
+                "type": "string",
+                "description": "Optional source Redmine system for transfer routing.",
+                "enum": [
+                  "asplus",
+                  "aeacl"
+                ]
+              },
+              "target_redmine": {
+                "type": "string",
+                "const": "aeacl",
+                "description": "Transfer destination. This branch ends at AE.ACL."
+              },
+              "reason": {
+                "type": "string",
+                "description": "Optional rejection reason."
+              },
+              "issue_id": {
+                "type": "string",
+                "description": "Redmine issue ID. The 主流程 can also extract it from raw or email_input."
               }
-            }
+            },
+            "anyOf": [
+              {
+                "required": [
+                  "issue_id"
+                ]
+              },
+              {
+                "required": [
+                  "raw"
+                ]
+              },
+              {
+                "required": [
+                  "email_input"
+                ]
+              }
+            ]
           },
           "response_mode": {
             "type": "string",
@@ -986,88 +1625,6 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
           "user": {
             "type": "string",
             "example": "swagger-test"
-          }
-        }
-      },
-      "MainflowTransferAsplusInputs": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "raw",
-          "action_user",
-          "intent",
-          "assignee_name"
-        ],
-        "properties": {
-          "raw": {
-            "type": "string",
-            "description": "Stringified JSON payload. For AS+, the UI sends {\"issue_id\": number}.",
-            "example": "{\"issue_id\":9502}"
-          },
-          "action_user": {
-            "type": "string",
-            "description": "User performing the transfer action.",
-            "example": "Key Huang",
-            "minLength": 1
-          },
-          "intent": {
-            "type": "string",
-            "const": "TRANSFER_ASPLUS"
-          },
-          "assignee_name": {
-            "type": "string",
-            "description": "Target assignee display name.",
-            "minLength": 1
-          },
-          "mode": {
-            "type": "string",
-            "description": "Optional Redmine target routing. Fill prod to run against production Redmine. Leave blank or any other value to run against the test Redmine site.",
-            "default": "",
-            "example": "prod"
-          }
-        }
-      },
-      "MainflowTransferAeaclInputs": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "raw",
-          "project_id_aeacl",
-          "action_user",
-          "intent",
-          "assignee_name"
-        ],
-        "properties": {
-          "raw": {
-            "type": "string",
-            "description": "Stringified JSON payload. For AE.ACL, the UI sends the full current issue object.",
-            "example": "{\"id\":9502,\"subject\":\"Network Issue\"}"
-          },
-          "project_id_aeacl": {
-            "type": "string",
-            "description": "AE.ACL Redmine project identifier.",
-            "example": "auto-2023074099328"
-          },
-          "action_user": {
-            "type": "string",
-            "description": "User performing the transfer action.",
-            "example": "Key Huang",
-            "minLength": 1
-          },
-          "intent": {
-            "type": "string",
-            "const": "TRANSFER_AEACL"
-          },
-          "assignee_name": {
-            "type": "string",
-            "description": "Target assignee display name.",
-            "minLength": 1
-          },
-          "mode": {
-            "type": "string",
-            "description": "Optional Redmine target routing. Fill prod to run against production Redmine. Leave blank or any other value to run against the test Redmine site.",
-            "default": "",
-            "example": "prod"
           }
         }
       },
@@ -1135,27 +1692,101 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
         "properties": {
           "inputs": {
             "type": "object",
+            "title": "Task Reject inputs from 主流程",
             "additionalProperties": false,
             "required": [
-              "issue_id",
-              "reason"
+              "action_user",
+              "intent",
+              "redmine",
+              "issue_id"
             ],
             "properties": {
-              "issue_id": {
+              "action_user": {
                 "type": "string",
-                "description": "Redmine issue ID.",
-                "minLength": 1
-              },
-              "reason": {
-                "type": "string",
-                "description": "Reason entered by the user when rejecting the task.",
+                "description": "Required by the 主流程 start node. User performing the action.",
+                "example": "Key Huang",
                 "minLength": 1
               },
               "mode": {
                 "type": "string",
-                "description": "Optional Redmine target routing. Fill prod to run against production Redmine. Leave blank or any other value to run against the test Redmine site.",
+                "description": "Optional Redmine routing. Fill prod for production; blank or any other value uses the test site.",
                 "default": "",
                 "example": "prod"
+              },
+              "user_input": {
+                "type": "string",
+                "description": "Free-text user request consumed by the 主流程 intent and field extraction nodes."
+              },
+              "email_input": {
+                "type": "string",
+                "description": "Original email content consumed by the 主流程 extraction nodes."
+              },
+              "raw": {
+                "type": "string",
+                "description": "Stringified JSON payload consumed by the 主流程 extraction nodes."
+              },
+              "files": {
+                "type": "array",
+                "description": "Optional Dify file-list input passed through the 主流程 when attachments are needed.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "project_id": {
+                "type": "string",
+                "description": "Optional AS+ Redmine project identifier or project override."
+              },
+              "project_id_aeacl": {
+                "type": "string",
+                "description": "AE.ACL Redmine project identifier used by the transfer/create branch.",
+                "example": "auto-2023074099328"
+              },
+              "intent": {
+                "type": "string",
+                "const": "REJECT",
+                "description": "Mainflow route for rejecting an existing Redmine issue."
+              },
+              "done": {
+                "type": "string",
+                "description": "Optional completion or confirmation value used by the 主流程."
+              },
+              "assignee_name": {
+                "type": "string",
+                "description": "Target Redmine assignee display name."
+              },
+              "redmine": {
+                "type": "string",
+                "enum": [
+                  "asplus",
+                  "aeacl"
+                ],
+                "description": "Redmine system containing the issue."
+              },
+              "source_redmine": {
+                "type": "string",
+                "description": "Optional source Redmine system for transfer routing.",
+                "enum": [
+                  "asplus",
+                  "aeacl"
+                ]
+              },
+              "target_redmine": {
+                "type": "string",
+                "description": "Destination Redmine system for transfer routing.",
+                "enum": [
+                  "asplus",
+                  "aeacl"
+                ]
+              },
+              "reason": {
+                "type": "string",
+                "description": "Optional reason entered when rejecting the task."
+              },
+              "issue_id": {
+                "type": "string",
+                "description": "Redmine issue ID to reject.",
+                "minLength": 1
               }
             }
           },
@@ -1267,6 +1898,1048 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "type": "integer"
           }
         }
+      },
+      "TaskCreateRequest": {
+        "type": "object",
+        "title": "Task Create",
+        "additionalProperties": false,
+        "required": [
+          "inputs",
+          "response_mode",
+          "user"
+        ],
+        "properties": {
+          "inputs": {
+            "type": "object",
+            "title": "Task Create inputs from 主流程",
+            "additionalProperties": false,
+            "required": [
+              "action_user",
+              "intent",
+              "redmine"
+            ],
+            "properties": {
+              "action_user": {
+                "type": "string",
+                "description": "Required by the 主流程 start node. User performing the action.",
+                "example": "Key Huang",
+                "minLength": 1
+              },
+              "mode": {
+                "type": "string",
+                "description": "Optional Redmine routing. Fill prod for production; blank or any other value uses the test site.",
+                "default": "",
+                "example": "prod"
+              },
+              "user_input": {
+                "type": "string",
+                "description": "Free-text user request consumed by the 主流程 intent and field extraction nodes."
+              },
+              "email_input": {
+                "type": "string",
+                "description": "Original email content consumed by the 主流程 extraction nodes."
+              },
+              "raw": {
+                "type": "string",
+                "description": "Stringified JSON payload consumed by the 主流程 extraction nodes."
+              },
+              "files": {
+                "type": "array",
+                "description": "Optional Dify file-list input passed through the 主流程 when attachments are needed.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "project_id": {
+                "type": "string",
+                "description": "Optional AS+ Redmine project identifier or project override."
+              },
+              "project_id_aeacl": {
+                "type": "string",
+                "description": "AE.ACL Redmine project identifier used by the transfer/create branch.",
+                "example": "auto-2023074099328"
+              },
+              "intent": {
+                "type": "string",
+                "const": "NEW",
+                "description": "Mainflow route for creating a new Redmine issue."
+              },
+              "done": {
+                "type": "string",
+                "description": "Optional completion or confirmation value used by the 主流程."
+              },
+              "assignee_name": {
+                "type": "string",
+                "description": "Target Redmine assignee display name."
+              },
+              "redmine": {
+                "type": "string",
+                "description": "Source or selected Redmine system.",
+                "enum": [
+                  "asplus",
+                  "aeacl"
+                ]
+              },
+              "source_redmine": {
+                "type": "string",
+                "description": "Optional source Redmine system for transfer routing.",
+                "enum": [
+                  "asplus",
+                  "aeacl"
+                ]
+              },
+              "target_redmine": {
+                "type": "string",
+                "description": "Destination Redmine system for transfer routing.",
+                "enum": [
+                  "asplus",
+                  "aeacl"
+                ]
+              },
+              "reason": {
+                "type": "string",
+                "description": "Optional rejection reason."
+              },
+              "issue_id": {
+                "type": "string",
+                "description": "Redmine issue ID. The 主流程 can also extract it from raw or email_input."
+              }
+            },
+            "anyOf": [
+              {
+                "required": [
+                  "email_input"
+                ]
+              },
+              {
+                "required": [
+                  "raw"
+                ]
+              },
+              {
+                "required": [
+                  "user_input"
+                ]
+              }
+            ]
+          },
+          "response_mode": {
+            "type": "string",
+            "enum": [
+              "blocking",
+              "streaming"
+            ],
+            "default": "blocking"
+          },
+          "user": {
+            "type": "string",
+            "example": "swagger-test"
+          }
+        }
+      },
+      "MainflowTaskCreateInputs": {
+        "type": "object",
+        "title": "Task Create inputs from 主流程",
+        "additionalProperties": false,
+        "required": [
+          "action_user",
+          "intent",
+          "redmine"
+        ],
+        "properties": {
+          "action_user": {
+            "type": "string",
+            "description": "Required by the 主流程 start node. User performing the action.",
+            "example": "Key Huang",
+            "minLength": 1
+          },
+          "mode": {
+            "type": "string",
+            "description": "Optional Redmine routing. Fill prod for production; blank or any other value uses the test site.",
+            "default": "",
+            "example": "prod"
+          },
+          "user_input": {
+            "type": "string",
+            "description": "Free-text user request consumed by the 主流程 intent and field extraction nodes."
+          },
+          "email_input": {
+            "type": "string",
+            "description": "Original email content consumed by the 主流程 extraction nodes."
+          },
+          "raw": {
+            "type": "string",
+            "description": "Stringified JSON payload consumed by the 主流程 extraction nodes."
+          },
+          "files": {
+            "type": "array",
+            "description": "Optional Dify file-list input passed through the 主流程 when attachments are needed.",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "project_id": {
+            "type": "string",
+            "description": "Optional AS+ Redmine project identifier or project override."
+          },
+          "project_id_aeacl": {
+            "type": "string",
+            "description": "AE.ACL Redmine project identifier used by the transfer/create branch.",
+            "example": "auto-2023074099328"
+          },
+          "intent": {
+            "type": "string",
+            "const": "NEW",
+            "description": "Mainflow route for creating a new Redmine issue."
+          },
+          "done": {
+            "type": "string",
+            "description": "Optional completion or confirmation value used by the 主流程."
+          },
+          "assignee_name": {
+            "type": "string",
+            "description": "Target Redmine assignee display name."
+          },
+          "redmine": {
+            "type": "string",
+            "description": "Source or selected Redmine system.",
+            "enum": [
+              "asplus",
+              "aeacl"
+            ]
+          },
+          "source_redmine": {
+            "type": "string",
+            "description": "Optional source Redmine system for transfer routing.",
+            "enum": [
+              "asplus",
+              "aeacl"
+            ]
+          },
+          "target_redmine": {
+            "type": "string",
+            "description": "Destination Redmine system for transfer routing.",
+            "enum": [
+              "asplus",
+              "aeacl"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "description": "Optional rejection reason."
+          },
+          "issue_id": {
+            "type": "string",
+            "description": "Redmine issue ID. The 主流程 can also extract it from raw or email_input."
+          }
+        },
+        "anyOf": [
+          {
+            "required": [
+              "email_input"
+            ]
+          },
+          {
+            "required": [
+              "raw"
+            ]
+          },
+          {
+            "required": [
+              "user_input"
+            ]
+          }
+        ]
+      },
+      "TaskUpdateRequest": {
+        "type": "object",
+        "title": "Task Update",
+        "additionalProperties": false,
+        "required": [
+          "inputs",
+          "response_mode",
+          "user"
+        ],
+        "properties": {
+          "inputs": {
+            "type": "object",
+            "title": "Task Update inputs from 主流程",
+            "additionalProperties": false,
+            "required": [
+              "action_user",
+              "intent",
+              "redmine"
+            ],
+            "properties": {
+              "action_user": {
+                "type": "string",
+                "description": "Required by the 主流程 start node. User performing the action.",
+                "example": "Key Huang",
+                "minLength": 1
+              },
+              "mode": {
+                "type": "string",
+                "description": "Optional Redmine routing. Fill prod for production; blank or any other value uses the test site.",
+                "default": "",
+                "example": "prod"
+              },
+              "user_input": {
+                "type": "string",
+                "description": "Free-text user request consumed by the 主流程 intent and field extraction nodes."
+              },
+              "email_input": {
+                "type": "string",
+                "description": "Original email content consumed by the 主流程 extraction nodes."
+              },
+              "raw": {
+                "type": "string",
+                "description": "Stringified JSON payload consumed by the 主流程 extraction nodes."
+              },
+              "files": {
+                "type": "array",
+                "description": "Optional Dify file-list input passed through the 主流程 when attachments are needed.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "project_id": {
+                "type": "string",
+                "description": "Optional AS+ Redmine project identifier or project override."
+              },
+              "project_id_aeacl": {
+                "type": "string",
+                "description": "AE.ACL Redmine project identifier used by the transfer/create branch.",
+                "example": "auto-2023074099328"
+              },
+              "intent": {
+                "type": "string",
+                "const": "UPDATE",
+                "description": "Mainflow route for updating an existing Redmine issue."
+              },
+              "done": {
+                "type": "string",
+                "description": "Optional completion or confirmation value used by the 主流程."
+              },
+              "assignee_name": {
+                "type": "string",
+                "description": "Target Redmine assignee display name."
+              },
+              "redmine": {
+                "type": "string",
+                "description": "Source or selected Redmine system.",
+                "enum": [
+                  "asplus",
+                  "aeacl"
+                ]
+              },
+              "source_redmine": {
+                "type": "string",
+                "description": "Optional source Redmine system for transfer routing.",
+                "enum": [
+                  "asplus",
+                  "aeacl"
+                ]
+              },
+              "target_redmine": {
+                "type": "string",
+                "description": "Destination Redmine system for transfer routing.",
+                "enum": [
+                  "asplus",
+                  "aeacl"
+                ]
+              },
+              "reason": {
+                "type": "string",
+                "description": "Optional rejection reason."
+              },
+              "issue_id": {
+                "type": "string",
+                "description": "Redmine issue ID. The 主流程 can also extract it from raw or email_input."
+              }
+            },
+            "anyOf": [
+              {
+                "required": [
+                  "issue_id"
+                ]
+              },
+              {
+                "required": [
+                  "raw"
+                ]
+              },
+              {
+                "required": [
+                  "email_input"
+                ]
+              }
+            ]
+          },
+          "response_mode": {
+            "type": "string",
+            "enum": [
+              "blocking",
+              "streaming"
+            ],
+            "default": "blocking"
+          },
+          "user": {
+            "type": "string",
+            "example": "swagger-test"
+          }
+        }
+      },
+      "MainflowTaskUpdateInputs": {
+        "type": "object",
+        "title": "Task Update inputs from 主流程",
+        "additionalProperties": false,
+        "required": [
+          "action_user",
+          "intent",
+          "redmine"
+        ],
+        "properties": {
+          "action_user": {
+            "type": "string",
+            "description": "Required by the 主流程 start node. User performing the action.",
+            "example": "Key Huang",
+            "minLength": 1
+          },
+          "mode": {
+            "type": "string",
+            "description": "Optional Redmine routing. Fill prod for production; blank or any other value uses the test site.",
+            "default": "",
+            "example": "prod"
+          },
+          "user_input": {
+            "type": "string",
+            "description": "Free-text user request consumed by the 主流程 intent and field extraction nodes."
+          },
+          "email_input": {
+            "type": "string",
+            "description": "Original email content consumed by the 主流程 extraction nodes."
+          },
+          "raw": {
+            "type": "string",
+            "description": "Stringified JSON payload consumed by the 主流程 extraction nodes."
+          },
+          "files": {
+            "type": "array",
+            "description": "Optional Dify file-list input passed through the 主流程 when attachments are needed.",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "project_id": {
+            "type": "string",
+            "description": "Optional AS+ Redmine project identifier or project override."
+          },
+          "project_id_aeacl": {
+            "type": "string",
+            "description": "AE.ACL Redmine project identifier used by the transfer/create branch.",
+            "example": "auto-2023074099328"
+          },
+          "intent": {
+            "type": "string",
+            "const": "UPDATE",
+            "description": "Mainflow route for updating an existing Redmine issue."
+          },
+          "done": {
+            "type": "string",
+            "description": "Optional completion or confirmation value used by the 主流程."
+          },
+          "assignee_name": {
+            "type": "string",
+            "description": "Target Redmine assignee display name."
+          },
+          "redmine": {
+            "type": "string",
+            "description": "Source or selected Redmine system.",
+            "enum": [
+              "asplus",
+              "aeacl"
+            ]
+          },
+          "source_redmine": {
+            "type": "string",
+            "description": "Optional source Redmine system for transfer routing.",
+            "enum": [
+              "asplus",
+              "aeacl"
+            ]
+          },
+          "target_redmine": {
+            "type": "string",
+            "description": "Destination Redmine system for transfer routing.",
+            "enum": [
+              "asplus",
+              "aeacl"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "description": "Optional rejection reason."
+          },
+          "issue_id": {
+            "type": "string",
+            "description": "Redmine issue ID. The 主流程 can also extract it from raw or email_input."
+          }
+        },
+        "anyOf": [
+          {
+            "required": [
+              "issue_id"
+            ]
+          },
+          {
+            "required": [
+              "raw"
+            ]
+          },
+          {
+            "required": [
+              "email_input"
+            ]
+          }
+        ]
+      },
+      "TaskReassignRequest": {
+        "type": "object",
+        "title": "Task Reassign",
+        "additionalProperties": false,
+        "required": [
+          "inputs",
+          "response_mode",
+          "user"
+        ],
+        "properties": {
+          "inputs": {
+            "type": "object",
+            "title": "Task Reassign inputs from 主流程",
+            "additionalProperties": false,
+            "required": [
+              "action_user",
+              "intent",
+              "redmine",
+              "issue_id",
+              "assignee_name"
+            ],
+            "properties": {
+              "action_user": {
+                "type": "string",
+                "description": "Required by the 主流程 start node. User performing the action.",
+                "example": "Key Huang",
+                "minLength": 1
+              },
+              "mode": {
+                "type": "string",
+                "description": "Optional Redmine routing. Fill prod for production; blank or any other value uses the test site.",
+                "default": "",
+                "example": "prod"
+              },
+              "user_input": {
+                "type": "string",
+                "description": "Free-text user request consumed by the 主流程 intent and field extraction nodes."
+              },
+              "email_input": {
+                "type": "string",
+                "description": "Original email content consumed by the 主流程 extraction nodes."
+              },
+              "raw": {
+                "type": "string",
+                "description": "Stringified JSON payload consumed by the 主流程 extraction nodes."
+              },
+              "files": {
+                "type": "array",
+                "description": "Optional Dify file-list input passed through the 主流程 when attachments are needed.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "project_id": {
+                "type": "string",
+                "description": "Optional AS+ Redmine project identifier or project override."
+              },
+              "project_id_aeacl": {
+                "type": "string",
+                "description": "AE.ACL Redmine project identifier used by the transfer/create branch.",
+                "example": "auto-2023074099328"
+              },
+              "intent": {
+                "type": "string",
+                "const": "REASSIGNMENT",
+                "description": "Mainflow route for changing the Redmine assignee."
+              },
+              "done": {
+                "type": "string",
+                "description": "Optional completion or confirmation value used by the 主流程."
+              },
+              "assignee_name": {
+                "type": "string",
+                "description": "New Redmine assignee display name.",
+                "minLength": 1
+              },
+              "redmine": {
+                "type": "string",
+                "enum": [
+                  "asplus",
+                  "aeacl"
+                ],
+                "description": "Redmine system containing the issue."
+              },
+              "source_redmine": {
+                "type": "string",
+                "description": "Optional source Redmine system for transfer routing.",
+                "enum": [
+                  "asplus",
+                  "aeacl"
+                ]
+              },
+              "target_redmine": {
+                "type": "string",
+                "description": "Destination Redmine system for transfer routing.",
+                "enum": [
+                  "asplus",
+                  "aeacl"
+                ]
+              },
+              "reason": {
+                "type": "string",
+                "description": "Optional rejection reason."
+              },
+              "issue_id": {
+                "type": "string",
+                "description": "Redmine issue ID to reassign.",
+                "minLength": 1
+              }
+            }
+          },
+          "response_mode": {
+            "type": "string",
+            "enum": [
+              "blocking",
+              "streaming"
+            ],
+            "default": "blocking"
+          },
+          "user": {
+            "type": "string",
+            "example": "swagger-test"
+          }
+        }
+      },
+      "MainflowTaskReassignInputs": {
+        "type": "object",
+        "title": "Task Reassign inputs from 主流程",
+        "additionalProperties": false,
+        "required": [
+          "action_user",
+          "intent",
+          "redmine",
+          "issue_id",
+          "assignee_name"
+        ],
+        "properties": {
+          "action_user": {
+            "type": "string",
+            "description": "Required by the 主流程 start node. User performing the action.",
+            "example": "Key Huang",
+            "minLength": 1
+          },
+          "mode": {
+            "type": "string",
+            "description": "Optional Redmine routing. Fill prod for production; blank or any other value uses the test site.",
+            "default": "",
+            "example": "prod"
+          },
+          "user_input": {
+            "type": "string",
+            "description": "Free-text user request consumed by the 主流程 intent and field extraction nodes."
+          },
+          "email_input": {
+            "type": "string",
+            "description": "Original email content consumed by the 主流程 extraction nodes."
+          },
+          "raw": {
+            "type": "string",
+            "description": "Stringified JSON payload consumed by the 主流程 extraction nodes."
+          },
+          "files": {
+            "type": "array",
+            "description": "Optional Dify file-list input passed through the 主流程 when attachments are needed.",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "project_id": {
+            "type": "string",
+            "description": "Optional AS+ Redmine project identifier or project override."
+          },
+          "project_id_aeacl": {
+            "type": "string",
+            "description": "AE.ACL Redmine project identifier used by the transfer/create branch.",
+            "example": "auto-2023074099328"
+          },
+          "intent": {
+            "type": "string",
+            "const": "REASSIGNMENT",
+            "description": "Mainflow route for changing the Redmine assignee."
+          },
+          "done": {
+            "type": "string",
+            "description": "Optional completion or confirmation value used by the 主流程."
+          },
+          "assignee_name": {
+            "type": "string",
+            "description": "New Redmine assignee display name.",
+            "minLength": 1
+          },
+          "redmine": {
+            "type": "string",
+            "enum": [
+              "asplus",
+              "aeacl"
+            ],
+            "description": "Redmine system containing the issue."
+          },
+          "source_redmine": {
+            "type": "string",
+            "description": "Optional source Redmine system for transfer routing.",
+            "enum": [
+              "asplus",
+              "aeacl"
+            ]
+          },
+          "target_redmine": {
+            "type": "string",
+            "description": "Destination Redmine system for transfer routing.",
+            "enum": [
+              "asplus",
+              "aeacl"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "description": "Optional rejection reason."
+          },
+          "issue_id": {
+            "type": "string",
+            "description": "Redmine issue ID to reassign.",
+            "minLength": 1
+          }
+        }
+      },
+      "MainflowTaskTransferAeaclInputs": {
+        "type": "object",
+        "title": "Task Transfer AE.ACL inputs from 主流程",
+        "additionalProperties": false,
+        "required": [
+          "action_user",
+          "intent",
+          "redmine",
+          "target_redmine",
+          "project_id_aeacl"
+        ],
+        "properties": {
+          "action_user": {
+            "type": "string",
+            "description": "Required by the 主流程 start node. User performing the action.",
+            "example": "Key Huang",
+            "minLength": 1
+          },
+          "mode": {
+            "type": "string",
+            "description": "Optional Redmine routing. Fill prod for production; blank or any other value uses the test site.",
+            "default": "",
+            "example": "prod"
+          },
+          "user_input": {
+            "type": "string",
+            "description": "Free-text user request consumed by the 主流程 intent and field extraction nodes."
+          },
+          "email_input": {
+            "type": "string",
+            "description": "Original email content consumed by the 主流程 extraction nodes."
+          },
+          "raw": {
+            "type": "string",
+            "description": "Stringified JSON payload consumed by the 主流程 extraction nodes."
+          },
+          "files": {
+            "type": "array",
+            "description": "Optional Dify file-list input passed through the 主流程 when attachments are needed.",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "project_id": {
+            "type": "string",
+            "description": "Optional AS+ Redmine project identifier or project override."
+          },
+          "project_id_aeacl": {
+            "type": "string",
+            "description": "AE.ACL Redmine project identifier.",
+            "example": "auto-2023074099328",
+            "minLength": 1
+          },
+          "intent": {
+            "type": "string",
+            "const": "TRANSFER",
+            "description": "Mainflow route for transferring an issue between Redmine systems."
+          },
+          "done": {
+            "type": "string",
+            "description": "Optional completion or confirmation value used by the 主流程."
+          },
+          "assignee_name": {
+            "type": "string",
+            "description": "Target Redmine assignee display name."
+          },
+          "redmine": {
+            "type": "string",
+            "const": "asplus",
+            "description": "Transfer source. This branch starts from AS+."
+          },
+          "source_redmine": {
+            "type": "string",
+            "description": "Optional source Redmine system for transfer routing.",
+            "enum": [
+              "asplus",
+              "aeacl"
+            ]
+          },
+          "target_redmine": {
+            "type": "string",
+            "const": "aeacl",
+            "description": "Transfer destination. This branch ends at AE.ACL."
+          },
+          "reason": {
+            "type": "string",
+            "description": "Optional rejection reason."
+          },
+          "issue_id": {
+            "type": "string",
+            "description": "Redmine issue ID. The 主流程 can also extract it from raw or email_input."
+          }
+        },
+        "anyOf": [
+          {
+            "required": [
+              "issue_id"
+            ]
+          },
+          {
+            "required": [
+              "raw"
+            ]
+          },
+          {
+            "required": [
+              "email_input"
+            ]
+          }
+        ]
+      },
+      "MainflowTaskRejectInputs": {
+        "type": "object",
+        "title": "Task Reject inputs from 主流程",
+        "additionalProperties": false,
+        "required": [
+          "action_user",
+          "intent",
+          "redmine",
+          "issue_id"
+        ],
+        "properties": {
+          "action_user": {
+            "type": "string",
+            "description": "Required by the 主流程 start node. User performing the action.",
+            "example": "Key Huang",
+            "minLength": 1
+          },
+          "mode": {
+            "type": "string",
+            "description": "Optional Redmine routing. Fill prod for production; blank or any other value uses the test site.",
+            "default": "",
+            "example": "prod"
+          },
+          "user_input": {
+            "type": "string",
+            "description": "Free-text user request consumed by the 主流程 intent and field extraction nodes."
+          },
+          "email_input": {
+            "type": "string",
+            "description": "Original email content consumed by the 主流程 extraction nodes."
+          },
+          "raw": {
+            "type": "string",
+            "description": "Stringified JSON payload consumed by the 主流程 extraction nodes."
+          },
+          "files": {
+            "type": "array",
+            "description": "Optional Dify file-list input passed through the 主流程 when attachments are needed.",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "project_id": {
+            "type": "string",
+            "description": "Optional AS+ Redmine project identifier or project override."
+          },
+          "project_id_aeacl": {
+            "type": "string",
+            "description": "AE.ACL Redmine project identifier used by the transfer/create branch.",
+            "example": "auto-2023074099328"
+          },
+          "intent": {
+            "type": "string",
+            "const": "REJECT",
+            "description": "Mainflow route for rejecting an existing Redmine issue."
+          },
+          "done": {
+            "type": "string",
+            "description": "Optional completion or confirmation value used by the 主流程."
+          },
+          "assignee_name": {
+            "type": "string",
+            "description": "Target Redmine assignee display name."
+          },
+          "redmine": {
+            "type": "string",
+            "enum": [
+              "asplus",
+              "aeacl"
+            ],
+            "description": "Redmine system containing the issue."
+          },
+          "source_redmine": {
+            "type": "string",
+            "description": "Optional source Redmine system for transfer routing.",
+            "enum": [
+              "asplus",
+              "aeacl"
+            ]
+          },
+          "target_redmine": {
+            "type": "string",
+            "description": "Destination Redmine system for transfer routing.",
+            "enum": [
+              "asplus",
+              "aeacl"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "description": "Optional reason entered when rejecting the task."
+          },
+          "issue_id": {
+            "type": "string",
+            "description": "Redmine issue ID to reject.",
+            "minLength": 1
+          }
+        }
+      },
+      "BriefSuggestionRequest": {
+        "type": "object",
+        "title": "Generate Brief & Suggestion",
+        "additionalProperties": false,
+        "required": [
+          "inputs",
+          "response_mode",
+          "user"
+        ],
+        "properties": {
+          "inputs": {
+            "type": "object",
+            "title": "Generate Brief & Suggestion inputs",
+            "additionalProperties": false,
+            "required": [
+              "redmine_data",
+              "description",
+              "action_user",
+              "clean_erma_data"
+            ],
+            "properties": {
+              "redmine_data": {
+                "type": "string",
+                "description": "Stringified Redmine issue payload.",
+                "example": "{\"id\":9502,\"subject\":\"Network Issue\"}",
+                "minLength": 1
+              },
+              "description": {
+                "type": "string",
+                "description": "Issue description used to generate a brief and suggested action.",
+                "minLength": 1
+              },
+              "action_user": {
+                "type": "string",
+                "description": "User requesting the generated brief and suggestion.",
+                "example": "Key Huang",
+                "minLength": 1
+              },
+              "clean_erma_data": {
+                "type": "string",
+                "description": "Cleaned ERMA data supplied to the workflow.",
+                "minLength": 1
+              }
+            }
+          },
+          "response_mode": {
+            "type": "string",
+            "enum": [
+              "blocking",
+              "streaming"
+            ],
+            "default": "blocking"
+          },
+          "user": {
+            "type": "string",
+            "example": "swagger-test"
+          }
+        }
+      },
+      "BriefSuggestionInputs": {
+        "type": "object",
+        "title": "Generate Brief & Suggestion inputs",
+        "additionalProperties": false,
+        "required": [
+          "redmine_data",
+          "description",
+          "action_user",
+          "clean_erma_data"
+        ],
+        "properties": {
+          "redmine_data": {
+            "type": "string",
+            "description": "Stringified Redmine issue payload.",
+            "example": "{\"id\":9502,\"subject\":\"Network Issue\"}",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string",
+            "description": "Issue description used to generate a brief and suggested action.",
+            "minLength": 1
+          },
+          "action_user": {
+            "type": "string",
+            "description": "User requesting the generated brief and suggestion.",
+            "example": "Key Huang",
+            "minLength": 1
+          },
+          "clean_erma_data": {
+            "type": "string",
+            "description": "Cleaned ERMA data supplied to the workflow.",
+            "minLength": 1
+          }
+        }
       }
     },
     "responses": {
@@ -1315,29 +2988,29 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
           "user": "swagger-test"
         }
       },
-      "MainflowTransferAsplusExample": {
-        "summary": "Task Transfer AS+",
+      "TaskCreateExample": {
+        "summary": "Task Create via 主流程",
         "value": {
           "inputs": {
-            "raw": "{\"issue_id\":9502}",
             "action_user": "Key Huang",
-            "intent": "TRANSFER_ASPLUS",
-            "assignee_name": "Key Huang",
+            "intent": "NEW",
+            "redmine": "asplus",
+            "email_input": "Customer reports intermittent disconnects on the device.",
             "mode": ""
           },
           "response_mode": "blocking",
           "user": "swagger-test"
         }
       },
-      "MainflowTransferAeaclExample": {
-        "summary": "Task Transfer AE.ACL",
+      "TaskUpdateExample": {
+        "summary": "Task Update via 主流程",
         "value": {
           "inputs": {
-            "raw": "{\"id\":9502,\"subject\":\"Network Issue\"}",
-            "project_id_aeacl": "auto-2023074099328",
             "action_user": "Key Huang",
-            "intent": "TRANSFER_AEACL",
-            "assignee_name": "Key Huang",
+            "intent": "UPDATE",
+            "redmine": "asplus",
+            "issue_id": "9502",
+            "user_input": "Please update the issue with the latest troubleshooting result.",
             "mode": ""
           },
           "response_mode": "blocking",
@@ -1354,10 +3027,44 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
           "user": "swagger-test"
         }
       },
-      "TaskRejectExample": {
-        "summary": "Task Reject",
+      "TaskReassignExample": {
+        "summary": "Task Reassign via 主流程",
         "value": {
           "inputs": {
+            "action_user": "Key Huang",
+            "intent": "REASSIGNMENT",
+            "redmine": "asplus",
+            "issue_id": "9502",
+            "assignee_name": "Albert.Sun",
+            "mode": ""
+          },
+          "response_mode": "blocking",
+          "user": "swagger-test"
+        }
+      },
+      "TaskTransferAeaclExample": {
+        "summary": "Task Transfer AE.ACL via 主流程",
+        "value": {
+          "inputs": {
+            "action_user": "Key Huang",
+            "intent": "TRANSFER",
+            "redmine": "asplus",
+            "target_redmine": "aeacl",
+            "project_id_aeacl": "auto-2023074099328",
+            "raw": "{\"id\":9502,\"subject\":\"Network Issue\"}",
+            "mode": ""
+          },
+          "response_mode": "blocking",
+          "user": "swagger-test"
+        }
+      },
+      "TaskRejectExample": {
+        "summary": "Task Reject via 主流程",
+        "value": {
+          "inputs": {
+            "action_user": "Key Huang",
+            "intent": "REJECT",
+            "redmine": "asplus",
             "issue_id": "9502",
             "reason": "Missing required customer environment information.",
             "mode": ""
@@ -1366,13 +3073,27 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
           "user": "swagger-test"
         }
       },
+      "BriefSuggestionExample": {
+        "summary": "Generate Brief & Suggestion",
+        "value": {
+          "inputs": {
+            "redmine_data": "{\"id\":9502,\"subject\":\"Network Issue\"}",
+            "description": "Customer reports intermittent disconnects.",
+            "action_user": "Key Huang",
+            "clean_erma_data": "Network issue; intermittent disconnects."
+          },
+          "response_mode": "blocking",
+          "user": "swagger-test"
+        }
+      },
       "EmailWriterExample": {
-        "summary": "Email-Writer",
+        "summary": "Email Writer",
         "value": {
           "inputs": {
             "issue_id": "9502",
             "audience": "external",
             "style": "Make the tone concise and customer-friendly.",
+            "redmine": "asplus",
             "mode": ""
           },
           "response_mode": "blocking",
