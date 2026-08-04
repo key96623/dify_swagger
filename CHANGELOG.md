@@ -1,5 +1,11 @@
 # Release Notes
 
+## 2.0.3 - 2026-08-04
+
+- Simplified each workflow input schema to only expose parameters used by its default Swagger sample.
+- Removed unused optional 主流程 inputs such as `user_input`, `email_input`, `files`, and project overrides from the workflow-specific schemas.
+- Kept sample-used options such as `mode`, Email Writer `style`, and Technical Bot `type`.
+
 ## 2.0.2 - 2026-08-04
 
 - Reordered the Swagger workflow selector: Technical Bot, Teams Bot, Task Summary, Generate Brief & Suggestion, Email Writer, then the five 主流程 branches.
