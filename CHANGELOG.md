@@ -1,10 +1,16 @@
 # Release Notes
 
+## 2.0.2 - 2026-08-04
+
+- Reordered the Swagger workflow selector: Technical Bot, Teams Bot, Task Summary, Generate Brief & Suggestion, Email Writer, then the five 主流程 branches.
+- Renamed the five 主流程 entries with the `via 主流程` suffix for clearer UI distinction.
+- Updated Generate Brief & Suggestion to use the YAML-aligned `issue_id` sample.
+
 ## 2.0.1 - 2026-08-04
 
 - Updated the default Swagger samples for Task Create, Task Update, Task Transfer AE.ACL, Task Reject, and Generate Brief & Suggestion.
 - Updated the latest mainflow sample values, including raw text inputs, AE.ACL project `auto-2023074099334`, and AE.ACL rejection issue `8965`.
-- Added the latest Brief & Suggestion optional start-node fields and kept both `issue` and the YAML-exported `issue_id` for compatibility.
+- Added the latest Brief & Suggestion optional start-node fields.
 
 ## 2.0.0 - 2026-08-04
 

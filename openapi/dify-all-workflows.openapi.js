@@ -3,7 +3,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
   "openapi": "3.1.0",
   "info": {
     "title": "Dify Workflows - All Schemas",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "description": "Single OpenAPI document for the original Dify workflow API. All workflows use the same POST /dify/v1/workflows/run endpoint; the Bearer API key selects the Dify app, while each workflow block documents its own inputs. Mainflow action blocks describe the public start-node variables and keep Redmine secrets and derived child-node values internal."
   },
   "servers": [
@@ -126,7 +126,190 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                   },
                   {
                     "type": "object",
-                    "title": "Task Create",
+                    "title": "Task Summary",
+                    "additionalProperties": false,
+                    "required": [
+                      "inputs",
+                      "response_mode",
+                      "user"
+                    ],
+                    "properties": {
+                      "inputs": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "redmine_data"
+                        ],
+                        "properties": {
+                          "mode": {
+                            "type": "string",
+                            "description": "Optional Redmine routing. Fill prod for production; blank or any other value uses the test site.",
+                            "default": "",
+                            "example": "prod"
+                          },
+                          "redmine_data": {
+                            "type": "string",
+                            "description": "Stringified Redmine issue payload. Dify expects redmine_data as a string, so pass JSON text instead of a JSON object.",
+                            "example": "{\"id\":9502,\"subject\":\"Network Issue\",\"description\":\"Customer reports intermittent disconnects.\"}"
+                          }
+                        }
+                      },
+                      "response_mode": {
+                        "type": "string",
+                        "enum": [
+                          "blocking",
+                          "streaming"
+                        ],
+                        "default": "blocking"
+                      },
+                      "user": {
+                        "type": "string",
+                        "example": "swagger-test"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "title": "Generate Brief & Suggestion",
+                    "additionalProperties": false,
+                    "required": [
+                      "inputs",
+                      "response_mode",
+                      "user"
+                    ],
+                    "properties": {
+                      "inputs": {
+                        "type": "object",
+                        "title": "Generate Brief & Suggestion inputs",
+                        "additionalProperties": false,
+                        "required": [
+                          "action_user"
+                        ],
+                        "properties": {
+                          "mode": {
+                            "type": "string",
+                            "description": "Optional Redmine routing. Fill prod for production; blank or any other value uses the test site.",
+                            "default": "",
+                            "example": "prod"
+                          },
+                          "redmine_data": {
+                            "type": "string",
+                            "description": "Optional stringified Redmine issue payload used by the latest YAML workflow."
+                          },
+                          "description": {
+                            "type": "string",
+                            "description": "Optional issue description used to generate a brief and suggested action."
+                          },
+                          "action_user": {
+                            "type": "string",
+                            "description": "User requesting the generated brief and suggestion.",
+                            "example": "Key Huang",
+                            "minLength": 1
+                          },
+                          "clean_erma_data": {
+                            "type": "string",
+                            "description": "Optional cleaned ERMA data supplied to the workflow."
+                          },
+                          "redmine": {
+                            "type": "string",
+                            "description": "Optional Redmine system used by the workflow.",
+                            "enum": [
+                              "asplus",
+                              "aeacl"
+                            ]
+                          },
+                          "issue_id": {
+                            "type": "string",
+                            "description": "Optional issue identifier declared by the latest exported Brief & Suggestion YAML.",
+                            "example": "9502"
+                          }
+                        }
+                      },
+                      "response_mode": {
+                        "type": "string",
+                        "enum": [
+                          "blocking",
+                          "streaming"
+                        ],
+                        "default": "blocking"
+                      },
+                      "user": {
+                        "type": "string",
+                        "example": "swagger-test"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "title": "Email-Writer",
+                    "additionalProperties": false,
+                    "required": [
+                      "inputs",
+                      "response_mode",
+                      "user"
+                    ],
+                    "properties": {
+                      "inputs": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "issue_id",
+                          "audience",
+                          "redmine"
+                        ],
+                        "properties": {
+                          "issue_id": {
+                            "type": "string",
+                            "description": "Redmine issue ID used to generate the email draft.",
+                            "minLength": 1
+                          },
+                          "audience": {
+                            "type": "string",
+                            "description": "Email audience. Fill external for customer-facing email, or internal for internal handoff email.",
+                            "enum": [
+                              "external",
+                              "internal"
+                            ],
+                            "example": "external"
+                          },
+                          "style": {
+                            "type": "string",
+                            "description": "Optional writing style or refinement instruction."
+                          },
+                          "mode": {
+                            "type": "string",
+                            "description": "Optional Redmine target routing. Fill prod to run against production Redmine. Leave blank or any other value to run against the test Redmine site.",
+                            "default": "",
+                            "example": "prod"
+                          },
+                          "redmine": {
+                            "type": "string",
+                            "description": "Redmine system used to retrieve the issue.",
+                            "enum": [
+                              "asplus",
+                              "aeacl"
+                            ],
+                            "example": "asplus"
+                          }
+                        }
+                      },
+                      "response_mode": {
+                        "type": "string",
+                        "enum": [
+                          "blocking",
+                          "streaming"
+                        ],
+                        "default": "blocking"
+                      },
+                      "user": {
+                        "type": "string",
+                        "example": "swagger-test"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "title": "Task Create via 主流程",
                     "additionalProperties": false,
                     "required": [
                       "inputs",
@@ -265,7 +448,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                   },
                   {
                     "type": "object",
-                    "title": "Task Update",
+                    "title": "Task Update via 主流程",
                     "additionalProperties": false,
                     "required": [
                       "inputs",
@@ -404,51 +587,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                   },
                   {
                     "type": "object",
-                    "title": "Task Summary",
-                    "additionalProperties": false,
-                    "required": [
-                      "inputs",
-                      "response_mode",
-                      "user"
-                    ],
-                    "properties": {
-                      "inputs": {
-                        "type": "object",
-                        "additionalProperties": false,
-                        "required": [
-                          "redmine_data"
-                        ],
-                        "properties": {
-                          "mode": {
-                            "type": "string",
-                            "description": "Optional Redmine routing. Fill prod for production; blank or any other value uses the test site.",
-                            "default": "",
-                            "example": "prod"
-                          },
-                          "redmine_data": {
-                            "type": "string",
-                            "description": "Stringified Redmine issue payload. Dify expects redmine_data as a string, so pass JSON text instead of a JSON object.",
-                            "example": "{\"id\":9502,\"subject\":\"Network Issue\",\"description\":\"Customer reports intermittent disconnects.\"}"
-                          }
-                        }
-                      },
-                      "response_mode": {
-                        "type": "string",
-                        "enum": [
-                          "blocking",
-                          "streaming"
-                        ],
-                        "default": "blocking"
-                      },
-                      "user": {
-                        "type": "string",
-                        "example": "swagger-test"
-                      }
-                    }
-                  },
-                  {
-                    "type": "object",
-                    "title": "Task Reassign",
+                    "title": "Task Reassign via 主流程",
                     "additionalProperties": false,
                     "required": [
                       "inputs",
@@ -574,7 +713,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                   },
                   {
                     "type": "object",
-                    "title": "Task Transfer AE.ACL",
+                    "title": "Task Transfer AE.ACL via 主流程",
                     "additionalProperties": false,
                     "required": [
                       "inputs",
@@ -710,7 +849,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                   },
                   {
                     "type": "object",
-                    "title": "Task Reject",
+                    "title": "Task Reject via 主流程",
                     "additionalProperties": false,
                     "required": [
                       "inputs",
@@ -831,162 +970,6 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                         "example": "swagger-test"
                       }
                     }
-                  },
-                  {
-                    "type": "object",
-                    "title": "Generate Brief & Suggestion",
-                    "additionalProperties": false,
-                    "required": [
-                      "inputs",
-                      "response_mode",
-                      "user"
-                    ],
-                    "properties": {
-                      "inputs": {
-                        "type": "object",
-                        "title": "Generate Brief & Suggestion inputs",
-                        "additionalProperties": false,
-                        "required": [
-                          "action_user"
-                        ],
-                        "properties": {
-                          "mode": {
-                            "type": "string",
-                            "description": "Optional Redmine routing. Fill prod for production; blank or any other value uses the test site.",
-                            "default": "",
-                            "example": "prod"
-                          },
-                          "redmine_data": {
-                            "type": "string",
-                            "description": "Optional stringified Redmine issue payload used by the latest YAML workflow."
-                          },
-                          "description": {
-                            "type": "string",
-                            "description": "Optional issue description used to generate a brief and suggested action."
-                          },
-                          "action_user": {
-                            "type": "string",
-                            "description": "User requesting the generated brief and suggestion.",
-                            "example": "Key Huang",
-                            "minLength": 1
-                          },
-                          "clean_erma_data": {
-                            "type": "string",
-                            "description": "Optional cleaned ERMA data supplied to the workflow."
-                          },
-                          "redmine": {
-                            "type": "string",
-                            "description": "Optional Redmine system used by the workflow.",
-                            "enum": [
-                              "asplus",
-                              "aeacl"
-                            ]
-                          },
-                          "issue": {
-                            "type": "string",
-                            "description": "Issue identifier used by the requested Swagger sample. The latest exported YAML still declares this start variable as issue_id; align the YAML variable name before production use.",
-                            "example": "9502"
-                          },
-                          "issue_id": {
-                            "type": "string",
-                            "description": "Issue identifier declared by the latest exported Brief & Suggestion YAML.",
-                            "example": "9502"
-                          }
-                        },
-                        "anyOf": [
-                          {
-                            "required": [
-                              "issue"
-                            ]
-                          },
-                          {
-                            "required": [
-                              "issue_id"
-                            ]
-                          }
-                        ]
-                      },
-                      "response_mode": {
-                        "type": "string",
-                        "enum": [
-                          "blocking",
-                          "streaming"
-                        ],
-                        "default": "blocking"
-                      },
-                      "user": {
-                        "type": "string",
-                        "example": "swagger-test"
-                      }
-                    }
-                  },
-                  {
-                    "type": "object",
-                    "title": "Email-Writer",
-                    "additionalProperties": false,
-                    "required": [
-                      "inputs",
-                      "response_mode",
-                      "user"
-                    ],
-                    "properties": {
-                      "inputs": {
-                        "type": "object",
-                        "additionalProperties": false,
-                        "required": [
-                          "issue_id",
-                          "audience",
-                          "redmine"
-                        ],
-                        "properties": {
-                          "issue_id": {
-                            "type": "string",
-                            "description": "Redmine issue ID used to generate the email draft.",
-                            "minLength": 1
-                          },
-                          "audience": {
-                            "type": "string",
-                            "description": "Email audience. Fill external for customer-facing email, or internal for internal handoff email.",
-                            "enum": [
-                              "external",
-                              "internal"
-                            ],
-                            "example": "external"
-                          },
-                          "style": {
-                            "type": "string",
-                            "description": "Optional writing style or refinement instruction."
-                          },
-                          "mode": {
-                            "type": "string",
-                            "description": "Optional Redmine target routing. Fill prod to run against production Redmine. Leave blank or any other value to run against the test Redmine site.",
-                            "default": "",
-                            "example": "prod"
-                          },
-                          "redmine": {
-                            "type": "string",
-                            "description": "Redmine system used to retrieve the issue.",
-                            "enum": [
-                              "asplus",
-                              "aeacl"
-                            ],
-                            "example": "asplus"
-                          }
-                        }
-                      },
-                      "response_mode": {
-                        "type": "string",
-                        "enum": [
-                          "blocking",
-                          "streaming"
-                        ],
-                        "default": "blocking"
-                      },
-                      "user": {
-                        "type": "string",
-                        "example": "swagger-test"
-                      }
-                    }
                   }
                 ]
               },
@@ -1007,6 +990,42 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                   "value": {
                     "inputs": {
                       "message": "Please summarize the current customer issue for Teams."
+                    },
+                    "response_mode": "blocking",
+                    "user": "swagger-test"
+                  }
+                },
+                "taskSummary": {
+                  "summary": "Task Summary",
+                  "value": {
+                    "inputs": {
+                      "redmine_data": "{\"id\":9502,\"subject\":\"Network Issue\",\"description\":\"Customer reports intermittent disconnects.\"}"
+                    },
+                    "response_mode": "blocking",
+                    "user": "swagger-test"
+                  }
+                },
+                "briefSuggestion": {
+                  "summary": "Generate Brief & Suggestion",
+                  "value": {
+                    "inputs": {
+                      "issue_id": "9502",
+                      "action_user": "Key Huang",
+                      "redmine": "asplus"
+                    },
+                    "response_mode": "blocking",
+                    "user": "swagger-test"
+                  }
+                },
+                "emailWriter": {
+                  "summary": "Email Writer",
+                  "value": {
+                    "inputs": {
+                      "issue_id": "9502",
+                      "audience": "external",
+                      "style": "Make the tone concise and customer-friendly.",
+                      "redmine": "asplus",
+                      "mode": ""
                     },
                     "response_mode": "blocking",
                     "user": "swagger-test"
@@ -1036,16 +1055,6 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                       "issue_id": "9502",
                       "raw": "Please update the issue with the latest troubleshooting result.",
                       "mode": ""
-                    },
-                    "response_mode": "blocking",
-                    "user": "swagger-test"
-                  }
-                },
-                "taskSummary": {
-                  "summary": "Task Summary",
-                  "value": {
-                    "inputs": {
-                      "redmine_data": "{\"id\":9502,\"subject\":\"Network Issue\",\"description\":\"Customer reports intermittent disconnects.\"}"
                     },
                     "response_mode": "blocking",
                     "user": "swagger-test"
@@ -1091,32 +1100,6 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                       "redmine": "aeacl",
                       "issue_id": "8965",
                       "reason": "Missing required customer environment information.",
-                      "mode": ""
-                    },
-                    "response_mode": "blocking",
-                    "user": "swagger-test"
-                  }
-                },
-                "briefSuggestion": {
-                  "summary": "Generate Brief & Suggestion",
-                  "value": {
-                    "inputs": {
-                      "issue": "9502",
-                      "action_user": "Key Huang",
-                      "redmine": "asplus"
-                    },
-                    "response_mode": "blocking",
-                    "user": "swagger-test"
-                  }
-                },
-                "emailWriter": {
-                  "summary": "Email Writer",
-                  "value": {
-                    "inputs": {
-                      "issue_id": "9502",
-                      "audience": "external",
-                      "style": "Make the tone concise and customer-friendly.",
-                      "redmine": "asplus",
                       "mode": ""
                     },
                     "response_mode": "blocking",
@@ -1238,34 +1221,9 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "requestSchema": "#/components/schemas/TeamsBotRequest"
           },
           {
-            "name": "Task Create",
-            "apiKeyEnv": "DIFY_MAINFLOW_API_KEY",
-            "requestSchema": "#/components/schemas/TaskCreateRequest"
-          },
-          {
-            "name": "Task Update",
-            "apiKeyEnv": "DIFY_MAINFLOW_API_KEY",
-            "requestSchema": "#/components/schemas/TaskUpdateRequest"
-          },
-          {
             "name": "Task Summary",
             "apiKeyEnv": "DIFY_TASK_SUMMARY_API_KEY",
             "requestSchema": "#/components/schemas/TaskSummaryRequest"
-          },
-          {
-            "name": "Task Reassign",
-            "apiKeyEnv": "DIFY_MAINFLOW_API_KEY",
-            "requestSchema": "#/components/schemas/TaskReassignRequest"
-          },
-          {
-            "name": "Task Transfer AE.ACL",
-            "apiKeyEnv": "DIFY_MAINFLOW_API_KEY",
-            "requestSchema": "#/components/schemas/TaskTransferAeaclRequest"
-          },
-          {
-            "name": "Task Reject",
-            "apiKeyEnv": "DIFY_MAINFLOW_API_KEY",
-            "requestSchema": "#/components/schemas/TaskRejectRequest"
           },
           {
             "name": "Generate Brief & Suggestion",
@@ -1276,6 +1234,31 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "name": "Email Writer",
             "apiKeyEnv": "DIFY_EMAIL_WRITER_API_KEY",
             "requestSchema": "#/components/schemas/EmailWriterRequest"
+          },
+          {
+            "name": "Task Create via 主流程",
+            "apiKeyEnv": "DIFY_MAINFLOW_API_KEY",
+            "requestSchema": "#/components/schemas/TaskCreateRequest"
+          },
+          {
+            "name": "Task Update via 主流程",
+            "apiKeyEnv": "DIFY_MAINFLOW_API_KEY",
+            "requestSchema": "#/components/schemas/TaskUpdateRequest"
+          },
+          {
+            "name": "Task Reassign via 主流程",
+            "apiKeyEnv": "DIFY_MAINFLOW_API_KEY",
+            "requestSchema": "#/components/schemas/TaskReassignRequest"
+          },
+          {
+            "name": "Task Transfer AE.ACL via 主流程",
+            "apiKeyEnv": "DIFY_MAINFLOW_API_KEY",
+            "requestSchema": "#/components/schemas/TaskTransferAeaclRequest"
+          },
+          {
+            "name": "Task Reject via 主流程",
+            "apiKeyEnv": "DIFY_MAINFLOW_API_KEY",
+            "requestSchema": "#/components/schemas/TaskRejectRequest"
           }
         ]
       }
@@ -1528,7 +1511,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
       },
       "TaskTransferAeaclRequest": {
         "type": "object",
-        "title": "Task Transfer AE.ACL",
+        "title": "Task Transfer AE.ACL via 主流程",
         "additionalProperties": false,
         "required": [
           "inputs",
@@ -1728,7 +1711,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
       },
       "TaskRejectRequest": {
         "type": "object",
-        "title": "Task Reject",
+        "title": "Task Reject via 主流程",
         "additionalProperties": false,
         "required": [
           "inputs",
@@ -1947,7 +1930,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
       },
       "TaskCreateRequest": {
         "type": "object",
-        "title": "Task Create",
+        "title": "Task Create via 主流程",
         "additionalProperties": false,
         "required": [
           "inputs",
@@ -2201,7 +2184,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
       },
       "TaskUpdateRequest": {
         "type": "object",
-        "title": "Task Update",
+        "title": "Task Update via 主流程",
         "additionalProperties": false,
         "required": [
           "inputs",
@@ -2455,7 +2438,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
       },
       "TaskReassignRequest": {
         "type": "object",
-        "title": "Task Reassign",
+        "title": "Task Reassign via 主流程",
         "additionalProperties": false,
         "required": [
           "inputs",
@@ -2943,29 +2926,12 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                   "aeacl"
                 ]
               },
-              "issue": {
-                "type": "string",
-                "description": "Issue identifier used by the requested Swagger sample. The latest exported YAML still declares this start variable as issue_id; align the YAML variable name before production use.",
-                "example": "9502"
-              },
               "issue_id": {
                 "type": "string",
-                "description": "Issue identifier declared by the latest exported Brief & Suggestion YAML.",
+                "description": "Optional issue identifier declared by the latest exported Brief & Suggestion YAML.",
                 "example": "9502"
               }
-            },
-            "anyOf": [
-              {
-                "required": [
-                  "issue"
-                ]
-              },
-              {
-                "required": [
-                  "issue_id"
-                ]
-              }
-            ]
+            }
           },
           "response_mode": {
             "type": "string",
@@ -3021,29 +2987,12 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
               "aeacl"
             ]
           },
-          "issue": {
-            "type": "string",
-            "description": "Issue identifier used by the requested Swagger sample. The latest exported YAML still declares this start variable as issue_id; align the YAML variable name before production use.",
-            "example": "9502"
-          },
           "issue_id": {
             "type": "string",
-            "description": "Issue identifier declared by the latest exported Brief & Suggestion YAML.",
+            "description": "Optional issue identifier declared by the latest exported Brief & Suggestion YAML.",
             "example": "9502"
           }
-        },
-        "anyOf": [
-          {
-            "required": [
-              "issue"
-            ]
-          },
-          {
-            "required": [
-              "issue_id"
-            ]
-          }
-        ]
+        }
       }
     },
     "responses": {
@@ -3181,7 +3130,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
         "summary": "Generate Brief & Suggestion",
         "value": {
           "inputs": {
-            "issue": "9502",
+            "issue_id": "9502",
             "action_user": "Key Huang",
             "redmine": "asplus"
           },

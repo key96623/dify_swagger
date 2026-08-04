@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Dify Workflows - All Schemas",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "description": "Single OpenAPI document for the original Dify workflow API. All workflows use the same POST /dify/v1/workflows/run endpoint; the Bearer API key selects the Dify app, while each workflow block documents its own inputs. Mainflow action blocks describe the public start-node variables and keep Redmine secrets and derived child-node values internal."
   },
   "servers": [
@@ -44,13 +44,19 @@
                     "$ref": "#/components/schemas/TeamsBotRequest"
                   },
                   {
+                    "$ref": "#/components/schemas/TaskSummaryRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/BriefSuggestionRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/EmailWriterRequest"
+                  },
+                  {
                     "$ref": "#/components/schemas/TaskCreateRequest"
                   },
                   {
                     "$ref": "#/components/schemas/TaskUpdateRequest"
-                  },
-                  {
-                    "$ref": "#/components/schemas/TaskSummaryRequest"
                   },
                   {
                     "$ref": "#/components/schemas/TaskReassignRequest"
@@ -60,12 +66,6 @@
                   },
                   {
                     "$ref": "#/components/schemas/TaskRejectRequest"
-                  },
-                  {
-                    "$ref": "#/components/schemas/BriefSuggestionRequest"
-                  },
-                  {
-                    "$ref": "#/components/schemas/EmailWriterRequest"
                   }
                 ]
               },
@@ -76,14 +76,20 @@
                 "teamsBot": {
                   "$ref": "#/components/examples/TeamsBotExample"
                 },
+                "taskSummary": {
+                  "$ref": "#/components/examples/TaskSummaryExample"
+                },
+                "briefSuggestion": {
+                  "$ref": "#/components/examples/BriefSuggestionExample"
+                },
+                "emailWriter": {
+                  "$ref": "#/components/examples/EmailWriterExample"
+                },
                 "taskCreate": {
                   "$ref": "#/components/examples/TaskCreateExample"
                 },
                 "taskUpdate": {
                   "$ref": "#/components/examples/TaskUpdateExample"
-                },
-                "taskSummary": {
-                  "$ref": "#/components/examples/TaskSummaryExample"
                 },
                 "taskReassign": {
                   "$ref": "#/components/examples/TaskReassignExample"
@@ -93,12 +99,6 @@
                 },
                 "taskReject": {
                   "$ref": "#/components/examples/TaskRejectExample"
-                },
-                "briefSuggestion": {
-                  "$ref": "#/components/examples/BriefSuggestionExample"
-                },
-                "emailWriter": {
-                  "$ref": "#/components/examples/EmailWriterExample"
                 }
               }
             }
@@ -134,34 +134,9 @@
             "requestSchema": "#/components/schemas/TeamsBotRequest"
           },
           {
-            "name": "Task Create",
-            "apiKeyEnv": "DIFY_MAINFLOW_API_KEY",
-            "requestSchema": "#/components/schemas/TaskCreateRequest"
-          },
-          {
-            "name": "Task Update",
-            "apiKeyEnv": "DIFY_MAINFLOW_API_KEY",
-            "requestSchema": "#/components/schemas/TaskUpdateRequest"
-          },
-          {
             "name": "Task Summary",
             "apiKeyEnv": "DIFY_TASK_SUMMARY_API_KEY",
             "requestSchema": "#/components/schemas/TaskSummaryRequest"
-          },
-          {
-            "name": "Task Reassign",
-            "apiKeyEnv": "DIFY_MAINFLOW_API_KEY",
-            "requestSchema": "#/components/schemas/TaskReassignRequest"
-          },
-          {
-            "name": "Task Transfer AE.ACL",
-            "apiKeyEnv": "DIFY_MAINFLOW_API_KEY",
-            "requestSchema": "#/components/schemas/TaskTransferAeaclRequest"
-          },
-          {
-            "name": "Task Reject",
-            "apiKeyEnv": "DIFY_MAINFLOW_API_KEY",
-            "requestSchema": "#/components/schemas/TaskRejectRequest"
           },
           {
             "name": "Generate Brief & Suggestion",
@@ -172,6 +147,31 @@
             "name": "Email Writer",
             "apiKeyEnv": "DIFY_EMAIL_WRITER_API_KEY",
             "requestSchema": "#/components/schemas/EmailWriterRequest"
+          },
+          {
+            "name": "Task Create via 主流程",
+            "apiKeyEnv": "DIFY_MAINFLOW_API_KEY",
+            "requestSchema": "#/components/schemas/TaskCreateRequest"
+          },
+          {
+            "name": "Task Update via 主流程",
+            "apiKeyEnv": "DIFY_MAINFLOW_API_KEY",
+            "requestSchema": "#/components/schemas/TaskUpdateRequest"
+          },
+          {
+            "name": "Task Reassign via 主流程",
+            "apiKeyEnv": "DIFY_MAINFLOW_API_KEY",
+            "requestSchema": "#/components/schemas/TaskReassignRequest"
+          },
+          {
+            "name": "Task Transfer AE.ACL via 主流程",
+            "apiKeyEnv": "DIFY_MAINFLOW_API_KEY",
+            "requestSchema": "#/components/schemas/TaskTransferAeaclRequest"
+          },
+          {
+            "name": "Task Reject via 主流程",
+            "apiKeyEnv": "DIFY_MAINFLOW_API_KEY",
+            "requestSchema": "#/components/schemas/TaskRejectRequest"
           }
         ]
       }
@@ -336,7 +336,7 @@
       },
       "TaskTransferAeaclRequest": {
         "type": "object",
-        "title": "Task Transfer AE.ACL",
+        "title": "Task Transfer AE.ACL via 主流程",
         "additionalProperties": false,
         "required": [
           "inputs",
@@ -400,7 +400,7 @@
       },
       "TaskRejectRequest": {
         "type": "object",
-        "title": "Task Reject",
+        "title": "Task Reject via 主流程",
         "additionalProperties": false,
         "required": [
           "inputs",
@@ -517,7 +517,7 @@
       },
       "TaskCreateRequest": {
         "type": "object",
-        "title": "Task Create",
+        "title": "Task Create via 主流程",
         "additionalProperties": false,
         "required": [
           "inputs",
@@ -654,7 +654,7 @@
       },
       "TaskUpdateRequest": {
         "type": "object",
-        "title": "Task Update",
+        "title": "Task Update via 主流程",
         "additionalProperties": false,
         "required": [
           "inputs",
@@ -791,7 +791,7 @@
       },
       "TaskReassignRequest": {
         "type": "object",
-        "title": "Task Reassign",
+        "title": "Task Reassign via 主流程",
         "additionalProperties": false,
         "required": [
           "inputs",
@@ -1187,29 +1187,12 @@
               "aeacl"
             ]
           },
-          "issue": {
-            "type": "string",
-            "description": "Issue identifier used by the requested Swagger sample. The latest exported YAML still declares this start variable as issue_id; align the YAML variable name before production use.",
-            "example": "9502"
-          },
           "issue_id": {
             "type": "string",
-            "description": "Issue identifier declared by the latest exported Brief & Suggestion YAML.",
+            "description": "Optional issue identifier declared by the latest exported Brief & Suggestion YAML.",
             "example": "9502"
           }
-        },
-        "anyOf": [
-          {
-            "required": [
-              "issue"
-            ]
-          },
-          {
-            "required": [
-              "issue_id"
-            ]
-          }
-        ]
+        }
       }
     },
     "responses": {
@@ -1335,7 +1318,7 @@
         "summary": "Generate Brief & Suggestion",
         "value": {
           "inputs": {
-            "issue": "9502",
+            "issue_id": "9502",
             "action_user": "Key Huang",
             "redmine": "asplus"
           },
