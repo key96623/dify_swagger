@@ -4,6 +4,7 @@
 
 - Added optional `target_project_id` to the `Task Reassign via 主流程` Swagger schema and default request sample.
 - Documented that a non-empty `target_project_id` reassigns the issue and moves it to the specified Redmine project.
+- Updated `Task Transfer AE.ACL via 主流程` to use the mainflow start-node variable `target_project_id` instead of `project_id_aeacl`.
 
 ## 2.0.3 - 2026-08-04
 

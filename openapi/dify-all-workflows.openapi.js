@@ -515,7 +515,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                           "intent",
                           "redmine",
                           "target_redmine",
-                          "project_id_aeacl"
+                          "target_project_id"
                         ],
                         "properties": {
                           "action_user": {
@@ -543,10 +543,10 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                             "const": "aeacl",
                             "description": "Transfer destination. This branch ends at AE.ACL."
                           },
-                          "project_id_aeacl": {
+                          "target_project_id": {
                             "type": "string",
-                            "description": "AE.ACL Redmine project identifier.",
-                            "example": "auto-2023074099328",
+                            "description": "Target Redmine project identifier used by the 主流程 transfer branch.",
+                            "example": "auto-2023074099334",
                             "minLength": 1
                           },
                           "mode": {
@@ -756,7 +756,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                       "redmine": "asplus",
                       "issue_id": "9502",
                       "target_redmine": "aeacl",
-                      "project_id_aeacl": "auto-2023074099334",
+                      "target_project_id": "auto-2023074099334",
                       "mode": ""
                     },
                     "response_mode": "blocking",
@@ -1200,7 +1200,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
               "intent",
               "redmine",
               "target_redmine",
-              "project_id_aeacl"
+              "target_project_id"
             ],
             "properties": {
               "action_user": {
@@ -1228,10 +1228,10 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                 "const": "aeacl",
                 "description": "Transfer destination. This branch ends at AE.ACL."
               },
-              "project_id_aeacl": {
+              "target_project_id": {
                 "type": "string",
-                "description": "AE.ACL Redmine project identifier.",
-                "example": "auto-2023074099328",
+                "description": "Target Redmine project identifier used by the 主流程 transfer branch.",
+                "example": "auto-2023074099334",
                 "minLength": 1
               },
               "mode": {
@@ -1837,7 +1837,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
           "intent",
           "redmine",
           "target_redmine",
-          "project_id_aeacl"
+          "target_project_id"
         ],
         "properties": {
           "action_user": {
@@ -1865,10 +1865,10 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "const": "aeacl",
             "description": "Transfer destination. This branch ends at AE.ACL."
           },
-          "project_id_aeacl": {
+          "target_project_id": {
             "type": "string",
-            "description": "AE.ACL Redmine project identifier.",
-            "example": "auto-2023074099328",
+            "description": "Target Redmine project identifier used by the 主流程 transfer branch.",
+            "example": "auto-2023074099334",
             "minLength": 1
           },
           "mode": {
@@ -2119,7 +2119,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "redmine": "asplus",
             "issue_id": "9502",
             "target_redmine": "aeacl",
-            "project_id_aeacl": "auto-2023074099334",
+            "target_project_id": "auto-2023074099334",
             "mode": ""
           },
           "response_mode": "blocking",
