@@ -549,6 +549,12 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                             "example": "auto-2023074099334",
                             "minLength": 1
                           },
+                          "assignee_name": {
+                            "type": "string",
+                            "description": "Target assignee display name passed to the Task Create workflow during transfer.",
+                            "example": "Albert.Sun",
+                            "minLength": 1
+                          },
                           "mode": {
                             "type": "string",
                             "description": "Optional Redmine routing. Fill prod for production; blank or any other value uses the test site.",
@@ -757,6 +763,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                       "issue_id": "9502",
                       "target_redmine": "aeacl",
                       "target_project_id": "auto-2023074099334",
+                      "assignee_name": "Albert.Sun",
                       "mode": ""
                     },
                     "response_mode": "blocking",
@@ -1232,6 +1239,12 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                 "type": "string",
                 "description": "Target Redmine project identifier used by the 主流程 transfer branch.",
                 "example": "auto-2023074099334",
+                "minLength": 1
+              },
+              "assignee_name": {
+                "type": "string",
+                "description": "Target assignee display name passed to the Task Create workflow during transfer.",
+                "example": "Albert.Sun",
                 "minLength": 1
               },
               "mode": {
@@ -1871,6 +1884,12 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "example": "auto-2023074099334",
             "minLength": 1
           },
+          "assignee_name": {
+            "type": "string",
+            "description": "Target assignee display name passed to the Task Create workflow during transfer.",
+            "example": "Albert.Sun",
+            "minLength": 1
+          },
           "mode": {
             "type": "string",
             "description": "Optional Redmine routing. Fill prod for production; blank or any other value uses the test site.",
@@ -2120,6 +2139,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "issue_id": "9502",
             "target_redmine": "aeacl",
             "target_project_id": "auto-2023074099334",
+            "assignee_name": "Albert.Sun",
             "mode": ""
           },
           "response_mode": "blocking",
