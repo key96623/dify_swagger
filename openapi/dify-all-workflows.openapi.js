@@ -3,7 +3,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
   "openapi": "3.1.0",
   "info": {
     "title": "Dify Workflows - All Schemas",
-    "version": "2.0.3",
+    "version": "2.0.4",
     "description": "Single OpenAPI document for the original Dify workflow API. All workflows use the same POST /dify/v1/workflows/run endpoint; the Bearer API key selects the Dify app, while each workflow block documents its own inputs. Mainflow action blocks describe the public start-node variables and keep Redmine secrets and derived child-node values internal."
   },
   "servers": [
@@ -463,6 +463,12 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                             "description": "Redmine issue ID to reassign.",
                             "minLength": 1
                           },
+                          "target_project_id": {
+                            "type": "string",
+                            "description": "Optional destination Redmine project ID or project identifier. When provided, the reassignment also moves the issue to this project.",
+                            "example": "auto-2023074099254",
+                            "minLength": 1
+                          },
                           "assignee_name": {
                             "type": "string",
                             "description": "New Redmine assignee display name.",
@@ -733,6 +739,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                       "intent": "REASSIGNMENT",
                       "redmine": "asplus",
                       "issue_id": "9502",
+                      "target_project_id": "auto-2023074099254",
                       "assignee_name": "Albert.Sun",
                       "mode": ""
                     },
@@ -1733,6 +1740,12 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
                 "description": "Redmine issue ID to reassign.",
                 "minLength": 1
               },
+              "target_project_id": {
+                "type": "string",
+                "description": "Optional destination Redmine project ID or project identifier. When provided, the reassignment also moves the issue to this project.",
+                "example": "auto-2023074099254",
+                "minLength": 1
+              },
               "assignee_name": {
                 "type": "string",
                 "description": "New Redmine assignee display name.",
@@ -1794,6 +1807,12 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
           "issue_id": {
             "type": "string",
             "description": "Redmine issue ID to reassign.",
+            "minLength": 1
+          },
+          "target_project_id": {
+            "type": "string",
+            "description": "Optional destination Redmine project ID or project identifier. When provided, the reassignment also moves the issue to this project.",
+            "example": "auto-2023074099254",
             "minLength": 1
           },
           "assignee_name": {
@@ -2083,6 +2102,7 @@ window.DIFY_ALL_WORKFLOWS_SPEC = {
             "intent": "REASSIGNMENT",
             "redmine": "asplus",
             "issue_id": "9502",
+            "target_project_id": "auto-2023074099254",
             "assignee_name": "Albert.Sun",
             "mode": ""
           },

@@ -1,5 +1,10 @@
 # Release Notes
 
+## 2.0.4 - 2026-08-07
+
+- Added optional `target_project_id` to the `Task Reassign via 主流程` Swagger schema and default request sample.
+- Documented that a non-empty `target_project_id` reassigns the issue and moves it to the specified Redmine project.
+
 ## 2.0.3 - 2026-08-04
 
 - Simplified each workflow input schema to only expose parameters used by its default Swagger sample.

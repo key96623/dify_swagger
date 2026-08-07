@@ -17,7 +17,7 @@ The Bearer API key selects the workflow, and each workflow expects different `in
 - `dify-swagger.html` opens Swagger UI with a workflow selector.
 - `CHANGELOG.md` records release notes for the Swagger schema.
 - `dify-api-key-list.md` lists the Dify workflow API keys and matching request inputs for UI developers.
-- `openapi/dify-all-workflows.openapi.json` is the canonical 2.0.3 document. It contains the ten workflow request schemas in the same `oneOf` request body, ordered for UI development. Each input schema is limited to the fields shown in its default sample.
+- `openapi/dify-all-workflows.openapi.json` is the canonical 2.0.4 document. It contains the ten workflow request schemas in the same `oneOf` request body, ordered for UI development. Each input schema is limited to the fields shown in its default sample.
 - `openapi/dify-all-workflows.openapi.js` is the generated, dereferenced browser wrapper used by `dify-swagger.html`.
 - The other files under `openapi/` are historical split documents. Use the canonical total file for the current API contract.
 
